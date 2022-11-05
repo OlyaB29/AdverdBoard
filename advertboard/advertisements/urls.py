@@ -11,4 +11,7 @@ urlpatterns = [
     path('adverts/', views.UserAdvertListView.as_view()),
     path('update-advert/<int:id>', views.UserAdvertUpdateView.as_view()),
     path('delete-advert/<int:id>', views.UserAdvertDeleteView.as_view()),
+    path('categories/', views.CategoryListView.as_view()),
+    path('regions/', views.RegionListView.as_view()),
+    path('values/', views.ValueListView.as_view()),
 ]

@@ -6,9 +6,10 @@ from . models import *
 
 class UserSerializer(serializers.ModelSerializer):
     # Сериализация пользователя
+
     class Meta:
         model = User
-        fields = ("username", "email")
+        fields = ("id", "username", "email")
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -18,6 +19,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ("user", "name", "phone", "avatar")
+        lookup_field = 'user_id'
 
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):

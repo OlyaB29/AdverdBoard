@@ -81,7 +81,7 @@ class Region(models.Model):
 class Place(models.Model):
     # Местоположение (города или районы г. Минска)
     city = models.CharField("Город/район", max_length=50, unique=True)
-    region = models.ForeignKey(Region, verbose_name="Область", on_delete=models.CASCADE)
+    region = models.ForeignKey(Region, verbose_name="Область", related_name='places', on_delete=models.CASCADE)
     slug = models.SlugField("url", max_length=50, unique=True)
 
     def __str__(self):

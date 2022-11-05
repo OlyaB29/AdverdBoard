@@ -1,7 +1,8 @@
 from django.db.models import OuterRef, Subquery
 from rest_framework import generics, permissions
-from . models import Advert, Gallery, Photo
-from . serializers import AdvertListSerializer, AdvertDetailSerializer, AdvertCreateUpdateSerializer
+from . models import Advert, Gallery, Photo, Category, Region, Value
+from .serializers import AdvertListSerializer, AdvertDetailSerializer, AdvertCreateUpdateSerializer, \
+    CategoryListSerializer, RegionSerializer, ValueSerializer
 
 
 class AdvertListView(generics.ListAPIView):
@@ -57,4 +58,23 @@ class UserAdvertDeleteView(generics.DestroyAPIView):
     lookup_field = 'id'
 
     def get_queryset(self):
-        return Advert.objects.filter(id=self.kwargs.get("pk"), user=self.request.user)
+        return Advert.objects.filter(user=self.request.user)
+
+# id=self.kwargs.get("pk"),
+class CategoryListView(generics.ListAPIView):
+    # Вывод списка категорий
+    permission_classes = [permissions.AllowAny]
+    serializer_class = CategoryListSerializer
+    queryset = Category.objects.all()
+
+class RegionListView(generics.ListAPIView):
+    # Вывод списка регионов
+    permission_classes = [permissions.AllowAny]
+    serializer_class = RegionSerializer
+    queryset = Region.objects.all()
+
+class ValueListView(generics.ListAPIView):
+    # Вывод списка значений характеристик
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ValueSerializer
+    queryset = Value.objects.all()

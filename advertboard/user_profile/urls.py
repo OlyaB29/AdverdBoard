@@ -5,7 +5,7 @@ from . import views
 
 
 urlpatterns = [
-    path("<int:pk>/", views.ProfileDetailView.as_view()),
+    path("<int:user_id>/", views.ProfileDetailView.as_view()),
     path("update/<int:pk>/", views.ProfileUpdateView.as_view()),
     path("update/avatar/<int:pk>/", views.AvatarUpdateView.as_view()),
 ]

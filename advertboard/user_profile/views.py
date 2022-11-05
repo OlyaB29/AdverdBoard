@@ -9,6 +9,7 @@ class ProfileDetailView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+    lookup_field = 'user_id'
 
 
 class ProfileUpdateView(generics.RetrieveUpdateAPIView):

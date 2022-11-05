@@ -1,0 +1,427 @@
+@import url('https://fonts.googleapis.com/css2?family=Black+And+White+Picture&family=Leckerli+One&family=Montserrat:wght@100;400;600&display=swap');
+@import 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css';
+
+* {
+    margin: 0;
+    padding: 0;
+
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    color: indigo;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: url(img/1643911522_1-phonoteka-org-p-fon-dlya-obyavleniya-kartinki-1-1.jpg) no-repeat;
+    background-size: cover;
+}
+
+.wrapper {
+    width: 1280px;
+    margin: 50px auto;
+}
+
+a.logo {
+    font-family: 'Leckerli One', cursive;
+    font-weight: 600;
+    font-size: 36px;
+    color: white;
+    display: block;
+    text-decoration: none;
+}
+
+nav {
+    background-color: rgba(148, 86, 140, 0.69);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+
+}
+
+form .btn {
+    background-color: rgba(148, 86, 140, 0.78);
+    width: 70px;
+}
+
+form .btn:hover {
+    background-color: #719d6f;
+}
+
+form .btn, form .form-control{
+    border-radius: 25px;
+}
+
+.nav-item-advert {
+    padding: 0;
+    background-color: rgb(113, 157, 111);
+    border-radius: 25px;
+}
+
+.options li {
+    display: inline-block;
+}
+
+.user-icon {
+    margin-left: 30px;
+    cursor: pointer;
+    transition: color 500ms ease;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #e4fae4;
+    width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 25px;
+}
+
+
+.dropdown-content a {
+    color: #60385b;
+    padding: 8px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover,
+.user-icon.active {color: rgb(113, 157, 111);
+}
+
+.drop {
+    display: grid;
+    position: relative;
+}
+
+.dropright-content {
+    display: none;
+    position: absolute;
+    background-color: #e4fae4;
+    width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 25px;
+    right: 180px;
+}
+
+
+.dropright-content a {
+    color: #60385b;
+    padding: 8px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropright-content a:hover {
+    background-color: #ddd;
+}
+
+.drop:hover .dropright-content {display: block;}
+
+.drop-ch {
+    display: grid;
+    position: relative;
+}
+
+.dropright-content-ch {
+    display: none;
+    position: absolute;
+    background-color: #e4fae4;
+    width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 25px;
+    right: 180px;
+}
+
+
+.dropright-content-ch a {
+    color: #60385b;
+    padding: 8px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropright-content-ch a:hover {
+    background-color: #ddd;
+}
+
+.drop-ch:hover .dropright-content-ch {display: block;}
+
+
+
+header .presentation {
+    margin: 40px auto;
+    width: 60%;
+    height: 500px;
+    background-size: cover;
+    background: url(img/изображение_viber_2022-10-29_22-11-58-039.png) no-repeat center center;
+}
+
+h1 {
+    text-align: center;
+}
+
+.card {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 25px;
+    background-color: rgba(252, 228, 248, 0.88);
+    font-weight: bolder;
+}
+
+.card h5 {
+    font-weight: bolder;
+}
+
+.card small {
+    font-size: medium;
+}
+
+.card ul {
+    list-style: none;
+}
+
+.card ul li {
+    display: inline;
+}
+
+.card a.card-link {
+    display: block;
+}
+
+.card-body {
+    color: indigo;
+}
+
+.card .col-md-3 {
+    position: relative;
+}
+
+.card .col-md-3 img {
+    position: absolute;
+    margin: auto;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.advert-detail {
+    background-color: rgba(246, 233, 246, 0.99);
+    margin-left: 80px;
+    margin-right: 80px;
+    border-radius: 45px;
+    font-weight: bolder;
+}
+
+p.date {
+    margin-right: 50px;
+    padding-top: 30px;
+    float: right;
+}
+
+h1.advert-title {
+    text-align: center;
+    padding-top: 20px;
+}
+
+.advert-images a.img {
+    display: inline-block;
+    width: 50px;
+    text-decoration: none;
+    color: indigo;
+    font-weight: bolder;
+}
+
+.advert-images, scroll-container {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.advert-images {
+    width: 350px;
+    padding: 5px;
+    /*border: 1px solid black;*/
+    background-color: beige;
+    margin-top: 30px;
+}
+
+scroll-container {
+    display: block;
+    width: 350px;
+    height: 300px;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    background-color: beige;
+    margin-bottom: 40px;
+}
+
+scroll-img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 5em;
+}
+
+.description {
+    margin-top: 30px;
+}
+
+
+.description h5{
+    text-decoration: underline;
+}
+
+.phones {
+    margin: 0 auto;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.phones button, .profile button {
+    margin-top: 10px;
+    border-radius: 25px;
+    width: 150px;
+    border-color: rgb(113, 157, 111);
+    border-width: initial;
+}
+
+.advert-user button {
+    border-radius: 25px;
+    width: 150px;
+    border-color: rgb(113, 157, 111);
+    border-width: initial;
+
+}
+
+.advert-user .second-btn {
+    background-color: rgba(148, 86, 140, 0.78);
+    height: 40px;
+}
+
+.advert-user .second-btn:hover {
+    background-color: #719d6f;
+}
+
+.advert-user {
+    margin: 0 auto;
+}
+
+.advert-user a {
+    color: indigo;
+}
+
+.profile button {
+    margin-right: 30px;
+    float: right;
+    bottom: -40px;
+    margin-bottom: 20px;
+}
+
+.profile {
+    margin-left: 200px;
+    background-color: rgba(246, 233, 246, 0.99);
+    margin-right: 200px;
+    border-radius: 45px;
+    font-weight: bolder;
+}
+
+.profile h2 {
+    text-align: center;
+    padding-top: 20px;
+}
+
+.profile .row {
+    margin-top: 30px;
+}
+
+.avatar {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    margin-bottom: 30px;
+    margin-top: 20px;
+}
+
+.form-signin h2 {
+    text-align: center;
+}
+
+.form-floating {
+    margin-top: 20px;
+}
+
+.form-signin button {
+    margin-top: 20px;
+}
+
+.form-signin input, .form-signin button {
+    height: 50px;
+}
+
+.form-signin {
+     width: 500px;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 10, 10, 0.73);
+    z-index: 9999;
+    overflow: auto;
+}
+
+.modal-content {
+    width: 400px;
+    height: 200px;
+    position: relative;
+    margin: 10% auto;
+    padding: 20px 30px;
+    background: #d2fad0;
+    border-radius: 25px;
+}
+
+.modal-content button {
+    background: rgba(196, 156, 190, 0.7);
+    /*border-top-left-radius: 25px;*/
+
+    color: indigo;
+    /*border-color: indigo;*/
+}
+
+.modal-content button:hover {
+    background: rgb(182, 218, 181);
+
+}
+
+.multi-select {
+    font-weight: bolder;
+    color: #363636;
+}
+
+footer {
+    text-align: center;
+    margin-top: 100px;
+    font-weight: bolder;
+    text-decoration: none;
+
+}
+
