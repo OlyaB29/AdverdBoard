@@ -26,7 +26,7 @@ componentDidMount() {
 render() {
 	return (
 		<div className="advert_list">
-		    <OutputAdverts adverts={this.state.adverts}/>
+		    <OutputAdverts adverts={this.state.adverts} isModeration={true}/>
 		</div>
 	    );
     }

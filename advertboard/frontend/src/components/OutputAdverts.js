@@ -14,7 +14,11 @@ export default function OutputAdverts (props) {
                             </div>
                             <div className="col-md-8">
                                 <div className="card-body">
-                                    <h5 className="card-title">{advert.title}</h5>
+									<ul>
+										<li><h5 className="card-title">{advert.title}</h5></li>
+									    {props.isModeration && !advert.moderation &&
+										<li className='mode float-right'>На модерации</li>}
+									</ul>
 								    <p className="card-text">{advert.price} р.</p>
                                     <p className="card-text"><small className="text-muted">{advert.category.parent.name} > {advert.category.name}</small></p>
 								    <ul>

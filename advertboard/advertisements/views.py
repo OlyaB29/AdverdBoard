@@ -2,7 +2,7 @@ from django.db.models import OuterRef, Subquery
 from rest_framework import generics, permissions
 from . models import Advert, Gallery, Photo, Category, Region, Value
 from .serializers import AdvertListSerializer, AdvertDetailSerializer, AdvertCreateUpdateSerializer, \
-    CategoryListSerializer, RegionSerializer, ValueSerializer
+    CategoryListSerializer, RegionSerializer, ValueSerializer, AdvertUpdateSerializer, PhotoSerializer
 
 
 class AdvertListView(generics.ListAPIView):
@@ -18,7 +18,7 @@ class AdvertListView(generics.ListAPIView):
 
 class AdvertDetailView(generics.RetrieveAPIView):
     # Вывод подробной информации об объявлении
-    queryset = Advert.objects.filter(moderation=True)
+    queryset = Advert.objects.all()
     permission_classes = [permissions.AllowAny]
     serializer_class = AdvertDetailSerializer
     lookup_field = 'id'
@@ -38,14 +38,14 @@ class UserAdvertListView(generics.ListAPIView):
 
     def get_queryset(self):
         photo = Photo.objects.filter(gallery__advert=OuterRef("pk"))
-        adverts = Advert.objects.filter(user=self.request.user, moderation=True).annotate(main_photo=Subquery(photo.values('image')[:1]))
+        adverts = Advert.objects.filter(user=self.request.user).annotate(main_photo=Subquery(photo.values('image')[:1]))
         return adverts
 
 
 class UserAdvertUpdateView(generics.RetrieveUpdateAPIView):
     # Редактирование объявления пользователя
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = AdvertCreateUpdateSerializer
+    serializer_class = AdvertUpdateSerializer
     lookup_field = 'id'
 
     def get_queryset(self):
@@ -78,3 +78,26 @@ class ValueListView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = ValueSerializer
     queryset = Value.objects.all()
+
+class PhotoCreateView(generics.ListCreateAPIView):
+    # Добавление фото
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Photo.objects.all()
+    serializer_class = PhotoSerializer
+
+class PhotoUpdateView(generics.RetrieveUpdateAPIView):
+    # Редактирование фотографии
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PhotoSerializer
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return Photo.objects.filter(gallery__advert__user=self.request.user)
+
+class PhotoDeleteView(generics.DestroyAPIView):
+    # Удаление фотографии
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return Photo.objects.filter(gallery__advert__user=self.request.user)

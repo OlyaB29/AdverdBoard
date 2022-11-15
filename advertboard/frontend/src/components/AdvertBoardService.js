@@ -60,11 +60,30 @@ export default class AdvertBoardService{
 		return axios.delete(url, { headers: {"Authorization" : `JWT ${access}`}});
 	}
 
-	createCustomer(customer) {
-		const url = `${API_URL}/api/customers/`;
-		return axios.post(url,customer);
+	createAdvert(advert, access) {
+		const url = `${API_URL}/api/create/`;
+		return axios.post(url, advert, { headers: {"Authorization" : `JWT ${access}`}});
 	}
 
+	createPhoto(photo, access) {
+		const url = `${API_URL}/api/create-photo/`;
+		return axios.post(url, photo, { headers: {"Authorization" : `JWT ${access}`}});
+	}
+
+	updatePhoto(pk, image, access) {
+		const url = `${API_URL}/api/update-photo/${pk}`;
+		return axios.patch(url, image, { headers: {"Authorization" : `JWT ${access}`}});
+	}
+
+	deletePhoto(pk, access) {
+		const url = `${API_URL}/api/delete-photo/${pk}`;
+		return axios.delete(url,{ headers: {"Authorization" : `JWT ${access}`}});
+	}
+
+	// updateGalleryAdvert(pk, data, access) {
+	// 	const url = `${API_URL}/api/update-advert/${pk}`;
+	// 	return axios.patch(url, data,{ headers: {"Authorization" : `JWT ${access}`}});
+	// }
 
 	updateAdvert(advert, access) {
 		const url = `${API_URL}/api/update-advert/${advert.pk}`;

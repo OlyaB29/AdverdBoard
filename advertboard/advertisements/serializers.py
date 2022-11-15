@@ -4,22 +4,31 @@ from rest_framework_recursive.fields import RecursiveField
 from . models import Advert, Gallery, Photo, Value, Category, Region, Place, Characteristic
 
 
+# class PhotoListSerializer(serializers.ListSerializer):
+#     # Фотографии
+#
+#     def create(self, validated_data):
+#         photos = [Photo(**photo) for photo in validated_data]
+#         return Photo.objects.bulk_create(photos)
+
 class PhotoSerializer(serializers.ModelSerializer):
     # Фотографии
 
     class Meta:
         model = Photo
-        fields = ('image',)
+        fields = ('id', 'image', 'gallery')
+        # list_serializer_class = PhotoListSerializer
+
 
 
 class GallerySerializer(serializers.ModelSerializer):
     # Галереи фотографий
 
-    photos = PhotoSerializer(many=True, read_only=True)
+    photos = PhotoSerializer(many=True)
 
     class Meta:
         model = Gallery
-        fields = ("photos",)
+        fields = ("id", "photos", 'advert')
 
 class CategoryParentSerializer(serializers.ModelSerializer):
     # Вывод родительских категорий
@@ -79,7 +88,7 @@ class AdvertListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Advert
-        fields = ('id', 'title', 'category', 'price', 'is_new', 'region', 'place', 'main_photo', 'date', 'gallery')
+        fields = ('id', 'title', 'category', 'price', 'is_new', 'region', 'place', 'main_photo', 'date', 'gallery', 'moderation')
 
 
 class AdvertDetailSerializer(serializers.ModelSerializer):
@@ -93,7 +102,7 @@ class AdvertDetailSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field='username', read_only=True)
     class Meta:
         model = Advert
-        exclude = ('moderation', 'slug')
+        exclude = ('slug',)
 
 
 class AdvertCreateUpdateSerializer(serializers.ModelSerializer):
@@ -118,3 +127,13 @@ class AdvertCreateUpdateSerializer(serializers.ModelSerializer):
             serializer.is_valid(raise_exception=True)
             serializer.save(advert=instance)
         return instance
+
+class AdvertUpdateSerializer(serializers.ModelSerializer):
+    # Редактирование объявления
+
+    gallery = GallerySerializer()
+
+    class Meta:
+        model = Advert
+        exclude = ('date', 'slug')
+

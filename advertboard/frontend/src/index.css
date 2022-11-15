@@ -10,7 +10,7 @@
 body {
     font-family: 'Montserrat', sans-serif;
     color: indigo;
-    font-weight: 300;
+    font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background: url(img/1643911522_1-phonoteka-org-p-fon-dlya-obyavleniya-kartinki-1-1.jpg) no-repeat;
@@ -35,8 +35,6 @@ nav {
     background-color: rgba(148, 86, 140, 0.69);
     color: white;
     font-size: 18px;
-    font-weight: bolder;
-
 }
 
 form .btn {
@@ -198,6 +196,10 @@ h1 {
     display: inline;
 }
 
+.card li.mode {
+   color: red;
+}
+
 .card a.card-link {
     display: block;
 }
@@ -225,6 +227,11 @@ h1 {
     margin-right: 80px;
     border-radius: 45px;
     font-weight: bolder;
+}
+
+.advert-detail text {
+   color: red;
+   margin-right: 20px;
 }
 
 p.date {
@@ -280,6 +287,7 @@ scroll-img {
 
 .description {
     margin-top: 30px;
+    margin-right: 10px;
 }
 
 
@@ -402,19 +410,170 @@ scroll-img {
 .modal-content button {
     background: rgba(196, 156, 190, 0.7);
     /*border-top-left-radius: 25px;*/
-
     color: indigo;
     /*border-color: indigo;*/
 }
 
 .modal-content button:hover {
     background: rgb(182, 218, 181);
-
 }
 
-.multi-select {
+.selected-photo {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 7px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.selected-photo img {
+    width: 100%;
+    height: 100%;
+    /*display: block;*/
+}
+
+.delete-photo {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    z-index: 9;
+    color: #d2fad0;
+}
+
+.selected-photo:after,
+.delete-photo {
+    opacity: 0;
+    transition: 0.7s;
+}
+
+.selected-photo:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.62);
+}
+
+.selected-photo:hover:after,
+.selected-photo:hover .delete-photo {
+    opacity: 1;
+}
+
+.add-advert .photos p {
+    color: rgb(64, 161, 64);
+    float: right;
+}
+
+.hidden {
+    opacity: 0;
+    height: 0;
+    width: 0;
+    line-height: 0;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+/*.selected-photo:hover .delete-photo {*/
+/*    display: block;*/
+/*    cursor: pointer;*/
+/*}*/
+
+.add-advert button {
+    background-color: #6c3f66;
+    color: white;
     font-weight: bolder;
-    color: #363636;
+    font-size: 19px;
+    height: 41px;
+    margin-top: 30px;
+}
+
+.add-advert label {
+    font-weight: 500;
+}
+
+.custom-select {
+    margin-top: 10px;
+    /*margin-bottom: 15px;*/
+    border-radius: 25px;
+}
+
+.multi-select__control {
+    border-radius: 25px !important;
+    margin-top: 10px !important;
+    margin-bottom: 5px;
+}
+.multi-select__placeholder {
+     color: #444444 !important;
+}
+.multi-select__indicator-separator {
+    display: none !important;
+}
+.multi-select__dropdown-indicator {
+    width: 35px;
+}
+.multi-select__multi-value {
+    border-radius: 15px !important;
+}
+.multi-select__multi-value__remove {
+    color: rgba(112, 3, 90, 0.98) !important;
+}
+.multi-select__multi-value__remove:hover {
+    background-color: rgba(196, 156, 190, 0.7) !important;
+}
+.multi-select__menu {
+    color: #444444 !important;
+}
+.multi-select__option {
+    height: 21px !important;
+    padding-top: 0 !important;
+}
+.multi-select__option:hover {
+    background-color: #6e6e6e !important;
+    color: white !important;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+}
+
+.radio {
+    background-color: rgba(248, 234, 246, 0.69);
+    display: inline-block;
+    margin-right: 20px;
+    padding-top: 7px;
+    padding-bottom: 3px;
+    border-radius: 25px;
+    width: 120px;
+    text-align: center;
+    align-content: center;
+    cursor: pointer;
+    border-color: rgba(148, 86, 140, 0.78);
+    border-style: dotted;
+}
+.radio:hover {
+    background-color: rgb(187, 224, 187);
+}
+
+.btn-phone {
+    background-color: rgba(248, 234, 246, 0) !important;
+    padding-top: 7px !important;
+    padding-bottom: 3px !important;
+    border-radius: 25px;
+    border: none;
+    color: rgb(50, 129, 50) !important;
+    font-weight: bolder !important;
+    cursor: pointer;
+    width: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 footer {

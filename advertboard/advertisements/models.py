@@ -188,6 +188,7 @@ class Photo(models.Model):
     class Meta:
         verbose_name = "Фотография"
         verbose_name_plural = "Фотографии"
+        ordering = ('id',)
 
 
 

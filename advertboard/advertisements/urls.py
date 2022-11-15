@@ -14,4 +14,7 @@ urlpatterns = [
     path('categories/', views.CategoryListView.as_view()),
     path('regions/', views.RegionListView.as_view()),
     path('values/', views.ValueListView.as_view()),
+    path('create-photo/', views.PhotoCreateView.as_view()),
+    path('update-photo/<int:id>', views.PhotoUpdateView.as_view()),
+    path('delete-photo/<int:id>', views.PhotoDeleteView.as_view()),
 ]

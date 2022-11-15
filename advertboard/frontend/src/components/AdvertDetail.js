@@ -44,11 +44,11 @@ function AdvertDetail() {
 
 
     return (
-        <div className='advert-detail'>
-            <p className='date'>{advert.date}</p>
+        <div className='advert-detail' key={advert.id}>
+            <p className='date'>{!advert.moderation && <text>На модерации</text>}{advert.date}</p>
             <h1 className='advert-title'>{advert.title}</h1>
             <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-5">
                     <nav className='advert-images'>
                         <a className='img' href="#img-1">1</a>
                         <a className='img' href="#img-2">2</a>
@@ -81,8 +81,8 @@ function AdvertDetail() {
                         </scroll-img>
                     </scroll-container>
                 </div>
-                <div className="col-md-6">
-                    <div className='description' key={advert.id}>
+                <div className="col-md-7">
+                    <div className='description'>
                         <h2>{advert.price} р.</h2>
                         <p>{advert.category.parent.name} > {advert.category.name}</p>
                         <p>{advert.region}, {advert.place}</p>
@@ -91,7 +91,7 @@ function AdvertDetail() {
                             <>
                                 <h5>Характеристики:</h5>
                                 <ul>{advert.charvalues.map(charvalue =>
-                                    <li>{charvalue.characteristic.name}: {charvalue.val}</li>)}
+                                    <li key={charvalue.id}>{charvalue.characteristic.name}: {charvalue.val}</li>)}
                                 </ul>
                             </>
                         }
@@ -102,13 +102,13 @@ function AdvertDetail() {
             </div>
             <div className="row">
                 <div className="phones">
-                    <div className="col-md-6">
+                    <div className="col-md-5">
                         {phones}
                         <button className='btn btn-success-outline' onClick={togglePhones}>Связаться</button>
                     </div>
                 </div>
 
-                <div className="col-md-6">
+                <div className="col-md-7">
                     <div className='advert-user'>
                         {advert.user === localStorage.getItem('user')
                             ? <div className="advert-button">
