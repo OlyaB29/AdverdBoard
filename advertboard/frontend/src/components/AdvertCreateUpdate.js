@@ -1,17 +1,16 @@
-import {useNavigate} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {useForm, Controller} from "react-hook-form";
 import Select from 'react-select'
 import React, {useEffect, useRef, useState} from "react";
 import AdvertBoardService from "./AdvertBoardService";
 import {BsPlusCircle, BsXOctagon} from "react-icons/bs";
 
-
 const advertBoardService = new AdvertBoardService();
 
-const CustomSelect = ({id, options, onChange, placeholder}) => {
+const CustomSelect = ({id, options, value, onChange, placeholder}) => {
 
     return (
-        <select className="custom-select" id={id} onChange={onChange} placeholder={placeholder}>
+        <select className="custom-select" id={id} value={value} onChange={onChange} placeholder={placeholder}>
             <option>Выберите...</option>
             {options.length === 0
                 ? <option>Вариантов нет</option>
@@ -28,20 +27,29 @@ const CustomSelect = ({id, options, onChange, placeholder}) => {
 }
 
 
-export default function AdvertCreate() {
+export default function AdvertCreateUpdate() {
     // const navigate = useNavigate()
-    // const user = localStorage.getItem('user')
     const access = localStorage.getItem('accessToken');
     // const refresh  = localStorage.getItem('refreshToken');
-    const {register, formState: {errors, isValid}, handleSubmit, reset, control, setValue} = useForm({mode: "onBlur"})
-    const [options, setOptions] = useState([])
-    const [categories, setCategories] = useState([])
-    const [allCharValues, setAllCharValues] = useState([])
-    const [charValues, setCharValues] = useState([])
-    const [regions, setRegions] = useState([])
-    const [places, setPlaces] = useState([])
-    const [selValuesId, setSelValuesId] = useState([])
-    const [isShowInputPhone, setIsShowInputPhone] = useState(false)
+    const {id} = useParams();
+    const {register, formState: {errors, isValid}, handleSubmit, reset, control, setValue} = useForm({mode: "onBlur"});
+    const [options, setOptions] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [allCharValues, setAllCharValues] = useState([]);
+    const [regions, setRegions] = useState([]);
+    const [places, setPlaces] = useState([]);
+    const [selValuesId, setSelValuesId] = useState([]);
+    const [isShowInputPhone, setIsShowInputPhone] = useState(false);
+    const [indexes, setIndexes] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    const [advert, setAdvert] = useState({});
+    const [oldPhotos, setOldPhotos] = useState([]);
+    const [idForDelete, setIdForDelete] = useState([]);
+    const [photos, setPhotos] = useState([]);
+    const selFile = useRef();
+    const [refe, setRefe] = useState([]);
+    let copy = Object.assign([], refe);
+    const [output, SetOutput] = useState(<p>Добавлено 0 фото из 10</p>);
+    const [isShowModal, setIsShowModal] = useState(false);
 
 
     const getOptions = (data) => {
@@ -59,8 +67,10 @@ export default function AdvertCreate() {
     useEffect(() => {
         advertBoardService.getRegions().then((result) => {
                 console.log(result.data);
+                result.data.map((r) => r.places.map((p) => places.push(p)));
+                console.log(places);
                 setRegions(result.data);
-                setPlaces(result.data[0].places);
+                setPlaces(places);
             }
         );
         advertBoardService.getCategories().then(function (response) {
@@ -68,28 +78,42 @@ export default function AdvertCreate() {
             setCategories(catResult);
             advertBoardService.getCharValues().then(function (result) {
                 setAllCharValues(result.data);
-                const valResult = result.data.filter(val => (val.characteristic.categories.includes(catResult[0].id)));
-                console.log(valResult);
-                setCharValues(valResult);
-                getOptions(valResult);
+                // const valResult = result.data.filter(val => (val.characteristic.categories.includes(catResult[0].id)));
+                // console.log(valResult);
+                // setCharValues(valResult);
+                // getOptions(valResult);
+                getOptions(result.data);
             });
         });
         advertBoardService.getProfile(localStorage.getItem('userId'), access).then(
             function (result) {
                 setValue("phone_1", result.phone)
+            });
+        if (id) {
+            advertBoardService.getAdvert(id).then(function (result) {
+                console.log(result);
+                setAdvert(result);
+                setValue("title", result.title);
+                setValue("category", result.category.id);
+                setValue("charvalues", result.charvalues.map((ch) => ch.id));
+                setValue("is_new", result.is_new);
+                setValue("price", result.price);
+                setValue("description", result.description);
+                setValue("region", result.region.id);
+                setValue("place", result.place.id);
+                setValue("phone_1", result.phone_1);
+                setValue("phone_2", result.phone_2);
+                if (result.gallery.photos) {
+                    setOldPhotos(result.gallery.photos);
+                    console.log(result.gallery.photos);
+                    setRefe(result.gallery.photos.map((ph) => ph.image));
+                    SetOutput(<p>Добавлено {result.gallery.photos.length} фото из 10</p>)
+                }
             })
+        }
     }, []);
 
-
-    // const onCategorySelectChange = (e) => {
-    //     const selCategoryID = e.target.value;
-    //     console.log(selCategoryID);
-    //     setCharValues(allCharValues.filter(val => (val.characteristic.categories.includes(Number(selCategoryID)))));
-    //     getOptions(allCharValues.filter(val => (val.characteristic.categories.includes(Number(selCategoryID)))));
-    // }
-
     const onCategorySelectChange = (e) => {
-        setCharValues(allCharValues.filter(val => (val.characteristic.categories.includes(Number(e)))));
         getOptions(allCharValues.filter(val => (val.characteristic.categories.includes(Number(e)))));
     }
 
@@ -108,79 +132,58 @@ export default function AdvertCreate() {
     const getValue = (value) => {
         console.log(selValuesId);
         console.log(options);
+        console.log(value);
         if (value) {
             return options.filter(option => value.indexOf(option.value) >= 0)
         } else {
             return []
         }
     }
-
-    const onCharValueSelectChange = (event) => {
-        event.map((e) => console.log(e.value));
-        setSelValuesId(event.map((e) => e.value));
-        console.log(selValuesId)
-    }
+    //
+    // const onCharValueSelectChange = (event) => {
+    //     event.map((e) => console.log(e.value));
+    //     setSelValuesId(event.map((e) => e.value));
+    //     console.log(selValuesId)
+    // }
 
     const onRegionSelectChange = (e) => {
-        // const selRegionID = e.target.value;
         const region = regions.find(item => item.id === Number(e));
         setPlaces(region.places);
-    }
-
-    const onPlaceSelectChange = (e) => {
-        const selPlaceID = e.target.value;
     }
 
     const showInput = () => {
         setIsShowInputPhone(!isShowInputPhone);
     }
 
-    // const [files, setFiles] = useState([]);
-    const [photos, setPhotos] = useState([]);
-    const img = []
-    img[0] = useRef()
-    img[1] = useRef()
-    img[2] = useRef()
-    img[3] = useRef()
-    img[4] = useRef()
-    img[5] = useRef()
-    img[6] = useRef()
-    img[7] = useRef()
-    img[8] = useRef()
-    img[9] = useRef()
-    const selFile = useRef()
-
-    const[output,SetOutput] = useState(<p>Добавлено 0 фото из 10</p>)
 
     const selectFiles = () => {
         selFile.current.click();
     }
 
+
     const renderPhoto = (photos) => {
-        const empty = [0,1,2,3,4,5,6,7,8,9];
+        // copy.length=0;
+        console.log(oldPhotos.length);
+        copy = copy.slice(0, oldPhotos.length)
+        console.log(copy);
+        !photos.length && setRefe(copy);
         photos.map((photo, index) => {
             const reader = new FileReader();
             console.log(index);
             console.log(photo.name);
             reader.onload = function () {
-                img[index].current.src = reader.result;
+                // img[index].current.src = reader.result;
+                copy.push(reader.result);
+                setRefe(copy);
             };
             reader.readAsDataURL(photo);
-            delete empty[index];
         });
-        if (empty.length) {
-            empty.map((em)=>
-            img[em].current.src = "/img/No_photo.png")}
 
-        SetOutput(<p>Добавлено {photos.length} фото из 10</p>)
-
-
+        SetOutput(<p>Добавлено {oldPhotos.length + photos.length} фото из 10</p>)
     }
 
     const addPhoto = (event) => {
-
         const target = event.target;
-
         if (!FileReader) {
             alert('FileReader не поддерживается — облом');
             return;
@@ -189,117 +192,88 @@ export default function AdvertCreate() {
             alert('Ничего не загружено');
             return;
         }
-
-        const files = Array.from(target.files || []).slice(0, (10-photos.length));
+        const files = Array.from(target.files || []).slice(0, (10 - photos.length));
         const allPhotos = photos.concat(files);
         setPhotos(allPhotos);
-
         renderPhoto(allPhotos);
-
-        // allPhotos.map((photo, index) => {
-        //     const reader = new FileReader();
-        //     console.log(index);
-        //     console.log(photo.name);
-        //     reader.onload = function () {
-        //         img[index].current.src = reader.result;
-        //     };
-        //     reader.readAsDataURL(photo);
-        //     delete empty[0];
-        // });
-        // if (empty.length) {
-        //     empty.map((em) => {
-        //         img[em].current.src = "/img/No_photo.png"
-        //     });
-        // }
     }
 
     const deletePhoto = (index) => {
-        photos.splice(index,1);
-        setPhotos(photos);
+        if (index >= oldPhotos.length) {
+            photos.splice(index - oldPhotos.length, 1);
+            setPhotos(photos);
+        } else {
+            idForDelete.push(oldPhotos[index].id);
+            setIdForDelete(idForDelete);
+            oldPhotos.splice(index, 1);
+            setOldPhotos(oldPhotos);
+            copy.splice(index, 1);
+        }
         renderPhoto(photos);
     }
 
+    const modal = () => {
+        setIsShowModal(!isShowModal);
+    }
+
+
     const onSubmit = (data) => {
         alert(JSON.stringify(data));
-        console.log(data);
-        advertBoardService.createAdvert(data, access).then(r => {
-            advertBoardService.getUserAdverts(access).then(function (result) {
-                const lastAdvert = result.sort((a, b) => b.id > a.id ? 1 : -1)[0];
-                const lastAdvertId = lastAdvert.id;
-                const lastGalleryId = lastAdvert.gallery.id;
-                console.log(lastGalleryId);
-                console.log(access);
-                // advertBoardService.updateGalleryAdvert(lastAdvertId, formData, access).then(function (result) {
-                //     alert('Фото добавлены');
-                //     console.log(result.config)
-                // });
-                const formData = new FormData();
-                // formData.append('gallery', lastGalleryId);
-                // files.map((file) => {
-                //     formData.set('image', file);
-                //     advertBoardService.createPhoto(formData, access).then(function (result) {
-                //         alert('Фото добавлены');
-                //     });
-                // });
-                // formData.set('image', files[0]);
-                // advertBoardService.updatePhoto(13,formData, access).then(function (result) {
-                //         alert('Фото изменено');
-                //     });
-                // advertBoardService.deletePhoto(15, access).then(function (result) {
-                //         alert('Фото удалено');
-                //     });
+        if (!id) {
+            advertBoardService.createAdvert(data, access).then(r => {
+                advertBoardService.getUserAdverts(access).then(function (result) {
+                    const lastAdvert = result.sort((a, b) => b.id > a.id ? 1 : -1)[0];
+                    const lastGalleryId = lastAdvert.gallery.id;
+                    console.log(lastGalleryId);
+                    console.log(access);
+                    const formData = new FormData();
+                    formData.append('gallery', lastGalleryId);
+                    photos.map((photo) => {
+                        formData.set('image', photo);
+                        advertBoardService.createPhoto(formData, access).then(function (result) {
+                            // alert('Фото добавлены');
+                        });
+                    });
+                });
+                reset();
+            }).then(r => setIsShowModal(true));
+        }
+        data['moderation'] = "False";
+        advertBoardService.updateAdvert(id, data, access).then(r => {
+            idForDelete.map((id) => advertBoardService.deletePhoto(id, access).then(function (result) {
+                alert('Фото удалено');
+            }));
+            const formData = new FormData();
+            formData.append('gallery', advert.gallery.id);
+            photos.map((photo) => {
+                formData.set('image', photo);
+                advertBoardService.createPhoto(formData, access).then(function (result) {
+                    // alert('Фото добавлено');
+                });
             });
-            reset()
-        });
+            // advertBoardService.updatePhoto(13,formData, access).then(function (result) {
+            //         alert('Фото изменено');
+            //     });
+        }).then(r => setIsShowModal(true));
     }
 
     return (
         <div className="add-advert">
             <div className="container mt-5" style={{width: 900}}>
-                <h1>Подача объявления</h1>
+                <h1>{id ? "Редактирование" : "Подача"} объявления</h1>
                 <form className='photos' style={{marginTop: 30}} onClick={selectFiles}>
-                    {/*{img.map((index)=>*/}
-                    {/*<img src="/img/No_photo.png" alt="" ref={img[index]} style={{margin:7}} width={160} height={160}/>)}*/}
-                    <div className="selected-photo" >
-                        <img src="/img/No_photo.png" alt="" ref={img[0]} />
-                        <BsXOctagon className="delete-photo" onClick={(event)=>{event.stopPropagation();deletePhoto(0)}}/>
-                    </div>
-                     <div className="selected-photo">
-                        <img src="/img/No_photo.png" alt="" ref={img[1]}/>
-                        <BsXOctagon className="delete-photo" onClick={(event)=>{event.stopPropagation();deletePhoto(1)}}/>
-                    </div>
-                     <div className="selected-photo">
-                        <img src="/img/No_photo.png" alt="" ref={img[2]}/>
-                        <BsXOctagon className="delete-photo" onClick={(event)=>{event.stopPropagation();deletePhoto(2)}}/>
-                    </div>
-                     <div className="selected-photo">
-                        <img src="/img/No_photo.png" alt="" ref={img[3]}/>
-                        <BsXOctagon className="delete-photo" onClick={(event)=>{event.stopPropagation();deletePhoto(3)}}/>
-                    </div>
-                     <div className="selected-photo">
-                        <img src="/img/No_photo.png" alt="" ref={img[4]}/>
-                        <BsXOctagon className="delete-photo" onClick={(event)=>{event.stopPropagation();deletePhoto(4)}}/>
-                    </div>
-                     <div className="selected-photo">
-                        <img src="/img/No_photo.png" alt="" ref={img[5]}/>
-                        <BsXOctagon className="delete-photo" onClick={(event)=>{event.stopPropagation();deletePhoto(5)}}/>
-                    </div>
-                     <div className="selected-photo">
-                        <img src="/img/No_photo.png" alt="" ref={img[6]}/>
-                        <BsXOctagon className="delete-photo" onClick={(event)=>{event.stopPropagation();deletePhoto(6)}}/>
-                    </div>
-                     <div className="selected-photo">
-                        <img src="/img/No_photo.png" alt="" ref={img[7]}/>
-                        <BsXOctagon className="delete-photo" onClick={(event)=>{event.stopPropagation();deletePhoto(7)}}/>
-                    </div>
-                     <div className="selected-photo">
-                        <img src="/img/No_photo.png" alt="" ref={img[8]}/>
-                        <BsXOctagon className="delete-photo" onClick={(event)=>{event.stopPropagation();deletePhoto(8)}}/>
-                    </div>
-                     <div className="selected-photo">
-                        <img src="/img/No_photo.png" alt="" ref={img[9]}/>
-                        <BsXOctagon className="delete-photo" onClick={(event)=>{event.stopPropagation();deletePhoto(9)}}/>
-                    </div>
+                    {indexes.map((index) =>
+                        <div className="selected-photo">
+                            {refe[index]
+                                ? <img src={refe[index]} alt=""/>
+                                : <img src="/img/No_photo.png" alt=""/>}
+                            <BsXOctagon className="delete-photo" onClick={(event) => {
+                                event.stopPropagation();
+                                deletePhoto(index)
+                            }}/>
+                        </div>
+                    )}
+
                     <input className="hidden" type="file" ref={selFile} multiple onChange={addPhoto}
                            accept="image/*,.png,.jpg,.gif"/>
                     {output}
@@ -311,7 +285,7 @@ export default function AdvertCreate() {
                         <input className="form-control" style={{marginTop: 10}}
                                {...register("title", {
                                    required: "Поле обязательно к заполнению",
-                                   maxLength: {value: 30, message: "Максимум 30 символов"}
+                                   maxLength: {value: 100, message: "Максимум 100 символов"}
                                })}
                         />
                         {errors?.title &&
@@ -325,9 +299,10 @@ export default function AdvertCreate() {
                             control={control}
                             name="category"
                             rules={{required: "Необходимо выбрать категорию"}}
-                            render={({field: {onChange}, fieldState: {error}}) => (
+                            render={({field: {onChange, value}, fieldState: {error}}) => (
                                 <div>
                                     <CustomSelect id="category" options={categories} placeholder="Выберите..."
+                                                  value={value}
                                                   onChange={(newValue) => {
                                                       onChange(Number(newValue.target.value));
                                                       onCategorySelectChange(newValue.target.value)
@@ -356,9 +331,6 @@ export default function AdvertCreate() {
                                             }}
                                             isMulti={true}
                                             placeholder="Выберите..."/>
-                                    {/*    <Select classNamePrefix="multi-select" options={options} value={getValue()}*/}
-                                    {/*onChange={onCharValueSelectChange} isMulti={true}*/}
-                                    {/*placeholder="Выберите характеристики"/>*/}
                                     {error &&
                                         <div className="error">
                                             <p>{error.message}</p>
@@ -378,7 +350,8 @@ export default function AdvertCreate() {
                                                value="1" {...register("is_new", {required: "Укажите состояние"})}/>
                                     </div>
                                     <div className="radio">
-                                        <label htmlFor="radio-2" style={{marginRight: 10, marginLeft: 15}}>Б/у</label>
+                                        <label htmlFor="radio-2"
+                                               style={{marginRight: 10, marginLeft: 15}}>Б/у</label>
                                         <input type="radio" name="radio" id="radio-2"
                                                value="2" {...register("is_new", {required: "Укажите состояние"})} />
                                     </div>
@@ -417,9 +390,11 @@ export default function AdvertCreate() {
                                     control={control}
                                     name="region"
                                     rules={{required: "Необходимо выбрать регион"}}
-                                    render={({field: {onChange}, fieldState: {error}}) => (
+                                    render={({field: {onChange, value}, fieldState: {error}}) => (
                                         <div>
-                                            <CustomSelect id="region" options={regions} placeholder="Выберите регион"
+                                            <CustomSelect id="region" options={regions}
+                                                          placeholder="Выберите регион"
+                                                          value={value}
                                                           onChange={(newValue) => {
                                                               onChange(Number(newValue.target.value));
                                                               onRegionSelectChange(newValue.target.value)
@@ -440,10 +415,11 @@ export default function AdvertCreate() {
                                     control={control}
                                     name="place"
                                     rules={{required: "Необходимо выбрать город или район города Минска"}}
-                                    render={({field: {onChange}, fieldState: {error}}) => (
+                                    render={({field: {onChange, value}, fieldState: {error}}) => (
                                         <div>
                                             <CustomSelect id="place" options={places}
                                                           placeholder="Выберите город или район"
+                                                          value={value}
                                                           onChange={(newValue) => {
                                                               onChange(Number(newValue.target.value))
                                                           }}/>
@@ -500,14 +476,25 @@ export default function AdvertCreate() {
                             }
                         </div>
                     </div>
-                    <button className="w-50 btn" type='submit'>Подать объявление</button>
+                    <button className="w-50 btn" type='submit'
+                            disabled={!isValid}>{id ? "Сохранить изменения" : "Подать объявление"}</button>
                 </form>
             </div>
+            {isShowModal &&
+                <div className="modal d-block py-5">
+                    <div className="modal-content-moder rounded-3 shadow">
+                        <div className="modal-body text-center">
+                            <h5 className="mb-0">Объявление отправлено на модерацию</h5>
+                        </div>
+                        <div className="modal-footer flex-nowrap p-0">
+                            <button type="button" className="btn" onClick={modal}>
+                                <strong>OK</strong></button>
+                        </div>
+                    </div>
+                </div>}
+
         </div>
-)
+    )
 }
-// disabled=
-//     {
-//         !isValid
-//     }
+
 

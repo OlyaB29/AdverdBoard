@@ -6,14 +6,16 @@ import AdvertDetail from "./components/AdvertDetail";
 import {LoginPage} from "./components/LoginPage";
 import {RequireAuth} from "./hogs/RequireAuth";
 import {AuthProvider} from "./hogs/AuthProvider";
-import AdvertCreate from "./components/AdvertCreate";
 import Tokens from "./components/Home";
 import UserProfile from "./components/UserProfile";
 import UserAdverts from "./components/UserAdverts";
 import CategoryAdvertList from "./components/CategoryAdvertList";
 import SearchAdverts from "./components/SearchAdverts";
-import AdvertUpdate from "./components/AdvertUpdate";
 import Top from "./components/Top";
+import Registration from "./components/Registration";
+import ProfileUpdate from "./components/ProfileUpdate";
+import AdvertCreateUpdate from "./components/AdvertCreateUpdate";
+import SellerAdverts from "./components/SellerAdverts";
 
 
 function BaseLayout() {
@@ -28,18 +30,24 @@ function BaseLayout() {
                 <Routes>
                     <Route path='/' element={<AdvertList/>}/>
                     <Route path='/adverts/:id' element={<AdvertDetail/>}/>
+                    <Route path='/adverts/seller/:id' element={<SellerAdverts/>}/>
                     <Route path='category/:slug' element={<CategoryAdvertList/>}/>
                     <Route path='search' element={<SearchAdverts/>}/>
+                    <Route path='registration' element={<Registration/>}/>
                     <Route path='tokens' element={<Tokens/>}/>
                     <Route path='advert-create' element={
                         <RequireAuth>
-                            <AdvertCreate/>
+                            <AdvertCreateUpdate/>
                         </RequireAuth>}/>
                     <Route path='advert-update/:id' element={
                         <RequireAuth>
-                            <AdvertUpdate/>
+                            <AdvertCreateUpdate/>
                         </RequireAuth>}/>
                     <Route path='login' element={<LoginPage/>}/>
+                    <Route path='profile-update/:id' element={
+                        <RequireAuth>
+                            <ProfileUpdate/>
+                        </RequireAuth>}/>
                     <Route path='profile/:id' element={
                         <RequireAuth>
                             <UserProfile/>

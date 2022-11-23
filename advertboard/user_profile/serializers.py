@@ -18,9 +18,17 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ("user", "name", "phone", "avatar")
+        fields = ("user", "name", "phone", "avatar", "date")
         lookup_field = 'user_id'
 
+class FreeProfileSerializer(serializers.ModelSerializer):
+    # Профиль продавца
+    user = UserSerializer()
+
+    class Meta:
+        model = Profile
+        fields = ("user", "name", "avatar", "date")
+        lookup_field = 'user_id'
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     # Редактирование профиля пользователя"""
@@ -31,7 +39,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 
 
 class AvatarUpdateSerializer(serializers.ModelSerializer):
-    # Редактирование аватар пользователя
+    # Редактирование аватара пользователя
     class Meta:
         model = Profile
         fields = ("avatar",)

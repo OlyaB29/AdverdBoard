@@ -38,12 +38,12 @@ nav {
 }
 
 form .btn {
-    background-color: rgba(148, 86, 140, 0.78);
+    background-color: rgba(148, 86, 140, 0.78) !important;
     width: 70px;
 }
 
 form .btn:hover {
-    background-color: #719d6f;
+    background-color: #719d6f !important;
 }
 
 form .btn, form .form-control{
@@ -157,8 +157,6 @@ form .btn, form .form-control{
 
 .drop-ch:hover .dropright-content-ch {display: block;}
 
-
-
 header .presentation {
     margin: 40px auto;
     width: 60%;
@@ -169,6 +167,27 @@ header .presentation {
 
 h1 {
     text-align: center;
+}
+
+.advert_list h1 {
+    margin-bottom: 40px;
+}
+
+.advert_list .row {
+    display: flex;
+    justify-content: space-evenly;
+    /*flex-wrap: wrap;*/
+}
+
+.advert_list .avatar {
+    width: 100px;
+    height: 120px;
+}
+
+.advert_list .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .card {
@@ -193,7 +212,7 @@ h1 {
 }
 
 .card ul li {
-    display: inline;
+    display: inline-block;
 }
 
 .card li.mode {
@@ -247,7 +266,7 @@ h1.advert-title {
 
 .advert-images a.img {
     display: inline-block;
-    width: 50px;
+    width: 35px;
     text-decoration: none;
     color: indigo;
     font-weight: bolder;
@@ -349,40 +368,78 @@ scroll-img {
     font-weight: bolder;
 }
 
+ i {
+    font-weight: normal !important;
+}
+
 .profile h2 {
     text-align: center;
     padding-top: 20px;
 }
 
-.profile .row {
+.profile-update h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile .row, .profile-update .row {
+    margin-top: 40px;
+}
+
+.profile-update label {
+    margin-top: 10px;
+    width: 450px;
+}
+
+.profile-update input {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.profile-update button {
+    color: white;
     margin-top: 30px;
+    width: 450px;
+}
+
+.add-avatar {
+    position: relative;
+    width: 200px;
+    height:200px;
+    margin: auto;
+    margin-top: 20px;
+    text-align: center;
+    cursor: pointer;
 }
 
 .avatar {
     display: block;
-    margin: 0 auto;
+    /*margin: 0 auto;*/
     text-align: center;
     margin-bottom: 30px;
     margin-top: 20px;
 }
 
-.form-signin h2 {
+.form-signin h2, .form-register h2 {
     text-align: center;
+    margin-bottom: 40px;
 }
 
 .form-floating {
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
-.form-signin button {
+.form-signin button, .form-register button {
     margin-top: 20px;
-}
-
-.form-signin input, .form-signin button {
     height: 50px;
 }
 
-.form-signin {
+.form-signin input, .form-register input {
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+.form-signin, .form-register {
      width: 500px;
 }
 
@@ -397,7 +454,7 @@ scroll-img {
     overflow: auto;
 }
 
-.modal-content {
+.modal-content, .modal-content-reg, .modal-content-moder {
     width: 400px;
     height: 200px;
     position: relative;
@@ -407,33 +464,50 @@ scroll-img {
     border-radius: 25px;
 }
 
-.modal-content button {
+.modal-content-reg {
+    width: 600px !important;
+}
+
+.modal-content-moder {
+    width: 350px !important;
+    padding: 0 0 !important;
+    padding-top: 15px !important;
+}
+
+.modal-content button, .modal-content-reg button, .modal-content-moder button {
     background: rgba(196, 156, 190, 0.7);
     /*border-top-left-radius: 25px;*/
     color: indigo;
     /*border-color: indigo;*/
 }
 
-.modal-content button:hover {
+.modal-content button:hover, .modal-content-reg button:hover, .modal-content-moder button:hover {
     background: rgb(182, 218, 181);
+}
+
+.modal-content-reg button, .modal-content-moder button {
+    border-radius: 25px;
+    width: 200px;
+    margin: auto;
 }
 
 .selected-photo {
     position: relative;
     width: 160px;
-    height: 160px;
+    height: 200px;
     margin: 7px;
     display: inline-block;
     cursor: pointer;
 }
 
-.selected-photo img {
+.selected-photo img, .add-avatar img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
     /*display: block;*/
 }
 
-.delete-photo {
+.delete-photo, .delete-avatar {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -444,13 +518,13 @@ scroll-img {
     color: #d2fad0;
 }
 
-.selected-photo:after,
-.delete-photo {
+.selected-photo:after, .delete-photo,
+.add-avatar:after, .delete-avatar {
     opacity: 0;
     transition: 0.7s;
 }
 
-.selected-photo:after {
+.selected-photo:after, .add-avatar:after {
     content: '';
     position: absolute;
     top: 0;
@@ -461,7 +535,9 @@ scroll-img {
 }
 
 .selected-photo:hover:after,
-.selected-photo:hover .delete-photo {
+.selected-photo:hover .delete-photo,
+.add-avatar:hover:after,
+.add-avatar:hover .delete-avatar {
     opacity: 1;
 }
 

@@ -1,8 +1,9 @@
 from django.db.models import OuterRef, Subquery
 from rest_framework import generics, permissions
 from . models import Advert, Gallery, Photo, Category, Region, Value
-from .serializers import AdvertListSerializer, AdvertDetailSerializer, AdvertCreateUpdateSerializer, \
-    CategoryListSerializer, RegionSerializer, ValueSerializer, AdvertUpdateSerializer, PhotoSerializer
+from .serializers import AdvertListSerializer, AdvertDetailSerializer, CategoryListSerializer, RegionSerializer, \
+    ValueSerializer, AdvertUpdateSerializer, PhotoSerializer, AdvertCreateSerializer
+from django.contrib.auth.models import User
 
 
 class AdvertListView(generics.ListAPIView):
@@ -24,11 +25,12 @@ class AdvertDetailView(generics.RetrieveAPIView):
     lookup_field = 'id'
 
 
+
 class AdvertCreateView(generics.CreateAPIView):
     # Добавление объявления
     permission_classes = [permissions.IsAuthenticated]
     queryset = Advert.objects.all()
-    serializer_class = AdvertCreateUpdateSerializer
+    serializer_class = AdvertCreateSerializer
 
 
 class UserAdvertListView(generics.ListAPIView):

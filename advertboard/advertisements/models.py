@@ -95,7 +95,7 @@ class Place(models.Model):
 
 class Advert(models.Model):
     # Объявления
-    user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, verbose_name="Пользователь", related_name='adverts', on_delete=models.CASCADE)
     title = models.CharField("Заголовок", max_length=200)
     category = TreeForeignKey(Category, verbose_name="Категория", related_name='adverts', on_delete=models.CASCADE)
     charvalues = ChainedManyToManyField(Value, chained_field="category",

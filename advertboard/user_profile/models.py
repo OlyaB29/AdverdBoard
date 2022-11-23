@@ -32,7 +32,8 @@ class Profile(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = "{}-{}".format(self.user.id, self.user.username)
-        self.avatar.name = get_path_upload_image(self.avatar.name, self.user.username)
+        if self.avatar:
+            self.avatar.name = get_path_upload_image(self.avatar.name, self.user.username)
         super().save(*args, **kwargs)
 
     #def get_absolute_url(self):

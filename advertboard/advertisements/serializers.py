@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from rest_framework_recursive.fields import RecursiveField
 from . models import Advert, Gallery, Photo, Value, Category, Region, Place, Characteristic
+# from ..user_profile.serializers import UserSerializer
 
 
 # class PhotoListSerializer(serializers.ListSerializer):
@@ -88,24 +89,24 @@ class AdvertListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Advert
-        fields = ('id', 'title', 'category', 'price', 'is_new', 'region', 'place', 'main_photo', 'date', 'gallery', 'moderation')
+        fields = ('id', 'title', 'category', 'price', 'is_new', 'region', 'place', 'main_photo', 'date', 'gallery', 'moderation','user')
 
 
 class AdvertDetailSerializer(serializers.ModelSerializer):
     # Подробная информация об объявлении
 
     category = CategoryListSerializer()
-    region = serializers.SlugRelatedField(slug_field='title', read_only=True)
-    place = serializers.SlugRelatedField(slug_field='city', read_only=True)
+    region = RegionSerializer()
+    place = PlaceSerializer()
     charvalues = ValueSerializer(many=True)
     gallery = GallerySerializer()
-    user = serializers.SlugRelatedField(slug_field='username', read_only=True)
+    # user = serializers.SlugRelatedField(slug_field='username', read_only=True)
     class Meta:
         model = Advert
         exclude = ('slug',)
 
 
-class AdvertCreateUpdateSerializer(serializers.ModelSerializer):
+class AdvertCreateSerializer(serializers.ModelSerializer):
     # Добавление объявления
 
     gallery = serializers.StringRelatedField()
@@ -131,9 +132,9 @@ class AdvertCreateUpdateSerializer(serializers.ModelSerializer):
 class AdvertUpdateSerializer(serializers.ModelSerializer):
     # Редактирование объявления
 
-    gallery = GallerySerializer()
+    # gallery = GallerySerializer()
 
     class Meta:
         model = Advert
-        exclude = ('date', 'slug')
+        exclude = ('date', 'slug', 'user')
 

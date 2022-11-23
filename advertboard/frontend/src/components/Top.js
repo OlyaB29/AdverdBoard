@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {Route, useNavigate} from 'react-router-dom';
 import {FaSearch, FaUserAlt} from "react-icons/fa";
 
 import {useAuth} from "../hook/useAuth";
 import AdvertBoardService from "./AdvertBoardService";
+import SearchAdverts from "./SearchAdverts";
 
 const advertBoardService = new AdvertBoardService();
 
@@ -95,7 +96,7 @@ export default function Top() {
                         </div>
                         : <div className='options'>
                             <li className="nav-item">
-                                <a className="nav-link active" href="#">Регистрация</a>
+                                <a className="nav-link active" href="/registration">Регистрация</a>
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link active" href="/login">Войти</a>

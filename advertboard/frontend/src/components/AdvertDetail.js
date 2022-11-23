@@ -8,18 +8,23 @@ const advertBoardService = new AdvertBoardService();
 
 function AdvertDetail() {
 
-    const [advert, setAdvert] = useState({gallery: {photos: [{image: null}, {image: null}, {image: null}]},
+    const [advert, setAdvert] = useState({gallery: {photos: []},
         category: {id: null, name: null, parent: {id: null, name: null, parent: null}, slug: null}});
-
     const {id} = useParams();
     const navigate = useNavigate();
     const [isShowPhones, setIsShowPhones] = useState(false);
     const [isShowModal, setIsShowModal] = useState(false);
+    const [seller, setSeller] = useState({})
 
     useEffect(() => {
         advertBoardService.getAdvert(id).then(function (result) {
             console.log(result);
             setAdvert(result);
+            advertBoardService.getSeller(result.user).then(function (res) {
+            console.log(res);
+            setSeller(res);
+        })
+
         })
     }, [id]);
 
@@ -48,50 +53,38 @@ function AdvertDetail() {
             <p className='date'>{!advert.moderation && <text>На модерации</text>}{advert.date}</p>
             <h1 className='advert-title'>{advert.title}</h1>
             <div className="row">
-                <div className="col-md-5">
+                {advert.gallery.photos.length>1
+                ? <div className="col-md-5">
                     <nav className='advert-images'>
-                        <a className='img' href="#img-1">1</a>
-                        <a className='img' href="#img-2">2</a>
-                        <a className='img' href="#img-3">3</a>
+                        {advert.gallery.photos.map((photo,index)=>
+                        <a className='img' key={index} href={`#img-${index}`}>{index+1}</a>)}
                     </nav>
-                    {/*{advert.gallery.photos.length>0*/}
-                    {/*<scroll-container>*/}
-                    {/*    <scroll-img id="img-1"><img width={250} height={250} src={advert.gallery.photos[0].image} className="img-fluid rounded-start" alt="..."/></scroll-img>*/}
-                    {/*    <scroll-img id="img-2">2</scroll-img>*/}
-                    {/*    <scroll-img id="img-3">3</scroll-img>*/}
-                    {/*</scroll-container>*/}
                     <scroll-container>
-                        <scroll-img id="img-1">{advert.gallery.photos[0]
-                            ? <img width={250} height={250} src={advert.gallery.photos[0].image}
+                        {advert.gallery.photos.map((photo,index)=>
+                        <scroll-img key={index} id={`img-${index}`}>
+                            <img width={250} height={250} src={photo.image}
                                    className="img-fluid rounded-start" alt="..."/>
-                            : <img width={250} height={250} src="/img/No_photo.png" className="img-fluid rounded-start"
-                                   alt="..."/>}
-                        </scroll-img>
-                        <scroll-img id="img-2">{advert.gallery.photos[1]
-                            ? <img width={250} height={250} src={advert.gallery.photos[1].image}
-                                   className="img-fluid rounded-start" alt="..."/>
-                            : <img width={250} height={250} src="/img/No_photo.png" className="img-fluid rounded-start"
-                                   alt="..."/>}
-                        </scroll-img>
-                        <scroll-img id="img-3">{advert.gallery.photos[2]
-                            ? <img width={250} height={250} src={advert.gallery.photos[2].image}
-                                   className="img-fluid rounded-start" alt="..."/>
-                            : <img width={250} height={250} src="/img/No_photo.png" className="img-fluid rounded-start"
-                                   alt="..."/>}
-                        </scroll-img>
+                        </scroll-img>)}
                     </scroll-container>
                 </div>
+                : <div className="col-md-5">
+                     <scroll-img>
+                            <img width={250} height={250} src={advert.gallery.photos.length===1 ? advert.gallery.photos[0].image : "/img/No_photo.png"}
+                                   className="img-fluid rounded-start" alt="..."/>
+                     </scroll-img>
+                 </div>}
+                
                 <div className="col-md-7">
                     <div className='description'>
                         <h2>{advert.price} р.</h2>
                         <p>{advert.category.parent.name} > {advert.category.name}</p>
-                        <p>{advert.region}, {advert.place}</p>
-                        <p>Состояние: {advert.is_new === "1" ? "новое" : "б/у"}</p>
+                        <p>{advert.region && advert.region.title}, {advert.place && advert.place.city}</p>
+                        <p><i>Состояние:</i> {advert.is_new === "1" ? "новое" : "б/у"}</p>
                         {advert.charvalues &&
                             <>
                                 <h5>Характеристики:</h5>
                                 <ul>{advert.charvalues.map(charvalue =>
-                                    <li key={charvalue.id}>{charvalue.characteristic.name}: {charvalue.val}</li>)}
+                                    <li key={charvalue.id}><i>{charvalue.characteristic.name}:</i> {charvalue.val}</li>)}
                                 </ul>
                             </>
                         }
@@ -107,7 +100,6 @@ function AdvertDetail() {
                         <button className='btn btn-success-outline' onClick={togglePhones}>Связаться</button>
                     </div>
                 </div>
-
                 <div className="col-md-7">
                     <div className='advert-user'>
                         {advert.user === localStorage.getItem('user')
@@ -117,9 +109,10 @@ function AdvertDetail() {
                                 </button>
                                 <button className='second-btn btn-success' onClick={modal}>Удалить</button>
                             </div>
-                            : <p><a href='#'>Продавец: {advert.user}</a></p>}
+                            : <p><a href={`/adverts/seller/${advert.user}`}><i>Продавец:</i> {seller.name ? seller.name : (seller.user && seller.user.username)}</a></p>}
                     </div>
                 </div>
+
             </div>
             {isShowModal &&
             <div className="modal d-block py-5">
@@ -135,9 +128,7 @@ function AdvertDetail() {
                     </div>
                 </div>
             </div>}
-
         </div>
-
     );
 }
 

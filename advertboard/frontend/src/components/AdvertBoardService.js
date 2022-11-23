@@ -40,6 +40,11 @@ export default class AdvertBoardService{
 		return axios.post(url,{username:username,password:password}).then(response => response.data);
 	}
 
+	createUser(user) {
+		const url = `${API_URL}/auth/users/`;
+		return axios.post(url, user);
+	}
+
 	getUser(access) {
 		const url = `${API_URL}/auth/users/me`;
 		return axios.get(url,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => response.data);
@@ -48,6 +53,11 @@ export default class AdvertBoardService{
 	getProfile(pk, access) {
 		const url = `${API_URL}/api/user_profile/${pk}`;
 		return axios.get(url,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => response.data);
+	}
+
+	getSeller(pk) {
+		const url = `${API_URL}/api/user_profile/free/${pk}`;
+		return axios.get(url).then(response => response.data);
 	}
 
 	getUserAdverts(access) {
@@ -80,14 +90,14 @@ export default class AdvertBoardService{
 		return axios.delete(url,{ headers: {"Authorization" : `JWT ${access}`}});
 	}
 
-	// updateGalleryAdvert(pk, data, access) {
-	// 	const url = `${API_URL}/api/update-advert/${pk}`;
-	// 	return axios.patch(url, data,{ headers: {"Authorization" : `JWT ${access}`}});
-	// }
+	updateAdvert(pk, advert, access) {
+		const url = `${API_URL}/api/update-advert/${pk}`;
+		return axios.put(url, advert,{ headers: {"Authorization" : `JWT ${access}`}});
+	}
 
-	updateAdvert(advert, access) {
-		const url = `${API_URL}/api/update-advert/${advert.pk}`;
-		return axios.put(url, {advert},{ headers: {"Authorization" : `JWT ${access}`}});
+	updateProfile(pk, profile, access) {
+		const url = `${API_URL}/api/user_profile/update/${pk}/`;
+		return axios.patch(url, profile,{ headers: {"Authorization" : `JWT ${access}`}});
 	}
 }
 

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import AdvertBoardService from './AdvertBoardService';
 
 const advertBoardService = new AdvertBoardService();
@@ -9,6 +9,7 @@ function UserProfile() {
 
     const [profile, setProfile] = useState({user:{username:null, email:null}});
     const {id} = useParams();
+    const navigate = useNavigate();
     const access = localStorage.getItem('accessToken')
 
     useEffect(() => {
@@ -35,11 +36,13 @@ function UserProfile() {
                     </div>
                     <div className="col-md-8">
                         <div className='description'>
-                            <p><i>Ваше имя: </i>{profile.name}</p>
+                            <p><i>Ваше имя: </i> {profile.name}</p>
                             <p><i>Имя пользователя: </i>{profile.user.username}</p>
                             <p><i>E-mail: </i>{profile.user.email}</p>
                             <p><i>Телефон: </i>{profile.phone}</p>
-                            <button className='btn btn-success-outline'>Редактировать</button>
+                            <br/>
+                            <p><small>Дата регистрации: {profile.date}</small></p>
+                            <button className='btn btn-success-outline' onClick={() => navigate(`/profile-update/${id}`)}>Редактировать</button>
                         </div>
                     </div>
                 </div>
