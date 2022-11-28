@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import AdvertBoardService from './AdvertBoardService';
 import OutputAdverts from "./OutputAdverts";
 import {useParams} from "react-router-dom";

@@ -17,7 +17,7 @@ function SearchAdverts() {
 
     useEffect(() => {
         advertBoardService.getAdverts().then(function (result) {
-            const res=result.filter(advert => advert.title.includes(advQuery));
+            const res=result.filter(advert => advert.title.toLowerCase().includes(advQuery));
 		    console.log(res);
             console.log(advQuery);
             setAdverts(res);

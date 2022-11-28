@@ -22,7 +22,7 @@ export default function OutputAdverts (props) {
 										<li className='mode float-right'>На модерации</li>}
 									</ul>
 								    <p className="card-text">{advert.price} р.</p>
-                                    <p className="card-text"><small className="text-muted">{advert.category.parent.name} > {advert.category.name}</small></p>
+                                    <p className="card-text"><small className="text-muted">{advert.category.parent && `${advert.category.parent.name} >`}{advert.category.name}</small></p>
 								    <ul>
                                         <li><small className="text-muted">{advert.is_new==="1" ? "Новое" : "Б/у"}, {advert.region}, {advert.place}</small></li>
                                         <li className='date float-right'>{advert.date}</li>

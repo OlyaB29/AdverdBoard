@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useForm, Controller} from "react-hook-form";
 import Select from 'react-select'
 import React, {useEffect, useRef, useState} from "react";
@@ -28,8 +28,9 @@ const CustomSelect = ({id, options, value, onChange, placeholder}) => {
 
 
 export default function AdvertCreateUpdate() {
-    // const navigate = useNavigate()
-    const access = localStorage.getItem('accessToken');
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [access, setAccess] = useState(localStorage.getItem('accessToken'));
     // const refresh  = localStorage.getItem('refreshToken');
     const {id} = useParams();
     const {register, formState: {errors, isValid}, handleSubmit, reset, control, setValue} = useForm({mode: "onBlur"});
@@ -38,7 +39,6 @@ export default function AdvertCreateUpdate() {
     const [allCharValues, setAllCharValues] = useState([]);
     const [regions, setRegions] = useState([]);
     const [places, setPlaces] = useState([]);
-    const [selValuesId, setSelValuesId] = useState([]);
     const [isShowInputPhone, setIsShowInputPhone] = useState(false);
     const [indexes, setIndexes] = useState([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
     const [advert, setAdvert] = useState({});
@@ -49,10 +49,14 @@ export default function AdvertCreateUpdate() {
     const [refe, setRefe] = useState([]);
     let copy = Object.assign([], refe);
     const [output, SetOutput] = useState(<p>Добавлено 0 фото из 10</p>);
+    const [isCreate, setIsCreate] = useState(false);
+    const [isUpdate, setIsUpdate] = useState(false);
+    const [data, setData] = useState({});
     const [isShowModal, setIsShowModal] = useState(false);
 
 
     const getOptions = (data) => {
+        console.log(data)
         const options =
             data.length === 0
                 ? [{value: 0, label: "Нет вариантов"}]
@@ -78,24 +82,35 @@ export default function AdvertCreateUpdate() {
             setCategories(catResult);
             advertBoardService.getCharValues().then(function (result) {
                 setAllCharValues(result.data);
-                // const valResult = result.data.filter(val => (val.characteristic.categories.includes(catResult[0].id)));
-                // console.log(valResult);
-                // setCharValues(valResult);
-                // getOptions(valResult);
-                getOptions(result.data);
+                if (!id) {getOptions(result.data)}
             });
         });
         advertBoardService.getProfile(localStorage.getItem('userId'), access).then(
             function (result) {
-                setValue("phone_1", result.phone)
+                if (result) {
+                    if (result.access) {
+                        localStorage.setItem('accessToken', result.access);
+                        setAccess(result.access);
+                        localStorage.setItem('refreshToken', result.refresh);
+                    } else {
+                        setValue("phone_1", result.phone)
+                    }
+                } else {
+                    navigate('/login', {replace: true, state: {from: location}});
+                }
             });
+        }, [access]);
+
+    useEffect(() => {
         if (id) {
+            console.log(allCharValues)
             advertBoardService.getAdvert(id).then(function (result) {
                 console.log(result);
                 setAdvert(result);
                 setValue("title", result.title);
                 setValue("category", result.category.id);
                 setValue("charvalues", result.charvalues.map((ch) => ch.id));
+                console.log(result.charvalues);
                 setValue("is_new", result.is_new);
                 setValue("price", result.price);
                 setValue("description", result.description);
@@ -109,28 +124,17 @@ export default function AdvertCreateUpdate() {
                     setRefe(result.gallery.photos.map((ph) => ph.image));
                     SetOutput(<p>Добавлено {result.gallery.photos.length} фото из 10</p>)
                 }
+                if (!result.charvalues.length) {getOptions(result.charvalues)}
+                else {getOptions(allCharValues.filter(val => (val.characteristic.categories.includes(result.category.id))))}
             })
         }
-    }, []);
+    }, [id,allCharValues]);
 
     const onCategorySelectChange = (e) => {
         getOptions(allCharValues.filter(val => (val.characteristic.categories.includes(Number(e)))));
     }
 
-    // const getValue = () => {
-    //     console.log(selValuesId);
-    //     console.log(options);
-    //     if (selValuesId.length > 0) {
-    //         // if (value.length > 0) {
-    //         return options.filter(option => selValuesId.indexOf(option.value) >= 0)
-    //         // return options.filter(option => value.indexOf(option.value) >= 0)
-    //     } else {
-    //         return []
-    //     }
-    // }
-
     const getValue = (value) => {
-        console.log(selValuesId);
         console.log(options);
         console.log(value);
         if (value) {
@@ -139,12 +143,6 @@ export default function AdvertCreateUpdate() {
             return []
         }
     }
-    //
-    // const onCharValueSelectChange = (event) => {
-    //     event.map((e) => console.log(e.value));
-    //     setSelValuesId(event.map((e) => e.value));
-    //     console.log(selValuesId)
-    // }
 
     const onRegionSelectChange = (e) => {
         const region = regions.find(item => item.id === Number(e));
@@ -159,7 +157,6 @@ export default function AdvertCreateUpdate() {
     const selectFiles = () => {
         selFile.current.click();
     }
-
 
     const renderPhoto = (photos) => {
         // copy.length=0;
@@ -216,45 +213,71 @@ export default function AdvertCreateUpdate() {
         setIsShowModal(!isShowModal);
     }
 
+    useEffect(() => {
+        if (isCreate) {
+            advertBoardService.createAdvert(data, access).then(function (r) {
+                if (r) {
+                    if (r.access) {
+                        console.log(r)
+                        localStorage.setItem('accessToken', r.access);
+                        setAccess(r.access);
+                        localStorage.setItem('refreshToken', r.refresh);
+                    } else {
+                        {photos.length
+                        ? advertBoardService.getUserAdverts(access).then(function (result) {
+                            const lastAdvert = result.sort((a, b) => b.id > a.id ? 1 : -1)[0];
+                            const lastGalleryId = lastAdvert.gallery.id;
+                            console.log(lastGalleryId);
+                            const formData = new FormData();
+                            formData.append('gallery', lastGalleryId);
+                            photos.map((photo) => {
+                                formData.set('image', photo);
+                                advertBoardService.createPhoto(formData, access);
+                            });
+                        }).then(r => setIsShowModal(true))
+                        : setIsShowModal(true)}
+                        reset();
+                    }
+                } else {
+                    navigate('/login', {replace: true, state: {from: location}});
+                }
+            });
+        }
+        if (isUpdate) {
+            advertBoardService.updateAdvert(id, data, access).then(function (r) {
+                if (r) {
+                    if (r.access) {
+                        console.log(r)
+                        localStorage.setItem('accessToken', r.access);
+                        setAccess(r.access);
+                        localStorage.setItem('refreshToken', r.refresh);
+                    } else {
+                        idForDelete.map((id) => advertBoardService.deletePhoto(id, access));
+                        const formData = new FormData();
+                        formData.append('gallery', advert.gallery.id);
+                        {photos.length &&
+                        photos.map((photo) => {
+                            formData.set('image', photo);
+                            advertBoardService.createPhoto(formData, access);
+                        })}
+                        setIsShowModal(true);
+                    }
+                } else {
+                    navigate('/login', {replace: true, state: {from: location}});
+                }
+            });
+        }
+    }, [isCreate, isUpdate, access, data])
 
     const onSubmit = (data) => {
         alert(JSON.stringify(data));
         if (!id) {
-            advertBoardService.createAdvert(data, access).then(r => {
-                advertBoardService.getUserAdverts(access).then(function (result) {
-                    const lastAdvert = result.sort((a, b) => b.id > a.id ? 1 : -1)[0];
-                    const lastGalleryId = lastAdvert.gallery.id;
-                    console.log(lastGalleryId);
-                    console.log(access);
-                    const formData = new FormData();
-                    formData.append('gallery', lastGalleryId);
-                    photos.map((photo) => {
-                        formData.set('image', photo);
-                        advertBoardService.createPhoto(formData, access).then(function (result) {
-                            // alert('Фото добавлены');
-                        });
-                    });
-                });
-                reset();
-            }).then(r => setIsShowModal(true));
+            setIsCreate(true);
+        } else {
+            data['moderation'] = "False";
+            setIsUpdate(true);
         }
-        data['moderation'] = "False";
-        advertBoardService.updateAdvert(id, data, access).then(r => {
-            idForDelete.map((id) => advertBoardService.deletePhoto(id, access).then(function (result) {
-                alert('Фото удалено');
-            }));
-            const formData = new FormData();
-            formData.append('gallery', advert.gallery.id);
-            photos.map((photo) => {
-                formData.set('image', photo);
-                advertBoardService.createPhoto(formData, access).then(function (result) {
-                    // alert('Фото добавлено');
-                });
-            });
-            // advertBoardService.updatePhoto(13,formData, access).then(function (result) {
-            //         alert('Фото изменено');
-            //     });
-        }).then(r => setIsShowModal(true));
+        setData(data);
     }
 
     return (
@@ -273,7 +296,6 @@ export default function AdvertCreateUpdate() {
                             }}/>
                         </div>
                     )}
-
                     <input className="hidden" type="file" ref={selFile} multiple onChange={addPhoto}
                            accept="image/*,.png,.jpg,.gif"/>
                     {output}
@@ -476,8 +498,8 @@ export default function AdvertCreateUpdate() {
                             }
                         </div>
                     </div>
-                    <button className="w-50 btn" type='submit'
-                            disabled={!isValid}>{id ? "Сохранить изменения" : "Подать объявление"}</button>
+                    <button className="w-50 btn" type='submit' disabled={!isValid}>
+                        {id ? "Сохранить изменения" : "Подать объявление"}</button>
                 </form>
             </div>
             {isShowModal &&

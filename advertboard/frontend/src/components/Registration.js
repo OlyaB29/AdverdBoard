@@ -1,4 +1,4 @@
-import {Navigate, useLocation, useNavigate} from 'react-router-dom'
+import {useLocation, useNavigate} from 'react-router-dom'
 import AdvertBoardService from "./AdvertBoardService";
 import React, {useState} from "react";
 import {useForm} from "react-hook-form";

@@ -7,6 +7,7 @@ const advertBoardService = new AdvertBoardService();
 
 
 const LoginPage = () => {
+
     const navigate = useNavigate();
     const location = useLocation();
     const {signIn} = useAuth();

@@ -1,17 +1,15 @@
 import axios from 'axios';
-import useAxios from "axios-hooks";
-import {useForm} from "react-hook-form";
-import {useEffect, useState} from "react";
-import Select from "react-select";
 const API_URL = 'http://localhost:8000';
 
-export default class AdvertBoardService{
+
+
+export default class AdvertBoardService {
 
 	getAdverts() {
 		const url = `${API_URL}/api/`;
 		return axios.get(url).then(response => response.data);
 	}
-	// getCustomersByURL(link){
+	// getAdvertsByURL(link){
 	// 	const url = `${API_URL}${link}`;
 	// 	return axios.get(url).then(response => response.data);
 	// }
@@ -40,19 +38,34 @@ export default class AdvertBoardService{
 		return axios.post(url,{username:username,password:password}).then(response => response.data);
 	}
 
+	getRefresh(refresh) {
+		const url = `${API_URL}/auth/jwt/refresh`;
+        return axios.post(url,{refresh:refresh}).then(response => response.data);
+	}
+
 	createUser(user) {
 		const url = `${API_URL}/auth/users/`;
 		return axios.post(url, user);
 	}
 
+	errorHandler(err) {
+		return (
+		err.response.data.detail === "Given token not valid for any token type"
+				? this.getRefresh(localStorage.getItem('refreshToken')).then((r)=>r).catch(
+					(error)=>error.response.data.detail==="Token is invalid or expired"
+						? localStorage.removeItem('user')
+						: alert("Произошла ошибка"))
+				: alert(err))
+	}
+
 	getUser(access) {
 		const url = `${API_URL}/auth/users/me`;
-		return axios.get(url,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => response.data);
+		return axios.get(url,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => response.data).catch((error)=>this.errorHandler(error));
 	}
 
 	getProfile(pk, access) {
 		const url = `${API_URL}/api/user_profile/${pk}`;
-		return axios.get(url,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => response.data);
+		return axios.get(url,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => response.data).catch((error)=>this.errorHandler(error));
 	}
 
 	getSeller(pk) {
@@ -62,17 +75,17 @@ export default class AdvertBoardService{
 
 	getUserAdverts(access) {
 		const url = `${API_URL}/api/adverts`;
-		return axios.get(url,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => response.data);
+		return axios.get(url,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => response.data).catch((error)=>this.errorHandler(error));
 	}
 
 	deleteAdvert(pk, access) {
 		const url = `${API_URL}/api/delete-advert/${pk}`;
-		return axios.delete(url, { headers: {"Authorization" : `JWT ${access}`}});
+		return axios.delete(url, { headers: {"Authorization" : `JWT ${access}`}}).then(response => "ok").catch((error)=>this.errorHandler(error));
 	}
 
 	createAdvert(advert, access) {
 		const url = `${API_URL}/api/create/`;
-		return axios.post(url, advert, { headers: {"Authorization" : `JWT ${access}`}});
+		return axios.post(url, advert, { headers: {"Authorization" : `JWT ${access}`}}).then(response => "ok").catch((error)=>this.errorHandler(error));
 	}
 
 	createPhoto(photo, access) {
@@ -80,10 +93,10 @@ export default class AdvertBoardService{
 		return axios.post(url, photo, { headers: {"Authorization" : `JWT ${access}`}});
 	}
 
-	updatePhoto(pk, image, access) {
-		const url = `${API_URL}/api/update-photo/${pk}`;
-		return axios.patch(url, image, { headers: {"Authorization" : `JWT ${access}`}});
-	}
+	// updatePhoto(pk, image, access) {
+	// 	const url = `${API_URL}/api/update-photo/${pk}`;
+	// 	return axios.patch(url, image, { headers: {"Authorization" : `JWT ${access}`}});
+	// }
 
 	deletePhoto(pk, access) {
 		const url = `${API_URL}/api/delete-photo/${pk}`;
@@ -92,12 +105,12 @@ export default class AdvertBoardService{
 
 	updateAdvert(pk, advert, access) {
 		const url = `${API_URL}/api/update-advert/${pk}`;
-		return axios.put(url, advert,{ headers: {"Authorization" : `JWT ${access}`}});
+		return axios.put(url, advert,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => "ok").catch((error)=>this.errorHandler(error));
 	}
 
 	updateProfile(pk, profile, access) {
 		const url = `${API_URL}/api/user_profile/update/${pk}/`;
-		return axios.patch(url, profile,{ headers: {"Authorization" : `JWT ${access}`}});
+		return axios.patch(url, profile,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => "ok").catch((error)=>this.errorHandler(error));
 	}
 }
 

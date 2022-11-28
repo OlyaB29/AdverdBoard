@@ -1,7 +1,7 @@
 # -- coding: utf-8 --
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from . models import *
+from .models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,6 +21,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ("user", "name", "phone", "avatar", "date")
         lookup_field = 'user_id'
 
+
 class FreeProfileSerializer(serializers.ModelSerializer):
     # Профиль продавца
     user = UserSerializer()
@@ -29,6 +30,7 @@ class FreeProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ("user", "name", "avatar", "date")
         lookup_field = 'user_id'
+
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     # Редактирование профиля пользователя"""

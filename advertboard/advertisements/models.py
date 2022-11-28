@@ -100,7 +100,7 @@ class Advert(models.Model):
     category = TreeForeignKey(Category, verbose_name="Категория", related_name='adverts', on_delete=models.CASCADE)
     charvalues = ChainedManyToManyField(Value, chained_field="category",
                                         chained_model_field="characteristic__categories", auto_choose=True,
-                                        horizontal=True, verbose_name="Значения характеристик")
+                                        horizontal=True, verbose_name="Значения характеристик", blank=True, null=True)
     description = models.TextField("Описание", max_length=5000)
     is_new = models.CharField("Состояние", max_length=5, choices=[('1', 'Новое'), ('2', 'Б/у')])
     price = models.DecimalField("Цена", max_digits=8, decimal_places=2, blank=True, null=True)
