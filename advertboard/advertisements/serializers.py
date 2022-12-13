@@ -1,8 +1,10 @@
  # -- coding: utf-8 --
 from rest_framework import serializers
 from rest_framework_recursive.fields import RecursiveField
-from . models import Advert, Gallery, Photo, Value, Category, Region, Place, Characteristic
-# from ..user_profile.serializers import UserSerializer
+from .models import Advert, Gallery, Photo, Value, Category, Region, Place, Characteristic, Chat, Message
+
+
+ # from ..user_profile.serializers import UserSerializer
 
 
 # class PhotoListSerializer(serializers.ListSerializer):
@@ -81,7 +83,7 @@ class RegionSerializer(serializers.ModelSerializer):
 class AdvertListSerializer(serializers.ModelSerializer):
     # Список объявлений
 
-    main_photo = serializers.ImageField()
+    # main_photo = serializers.ImageField()
     category = CategoryListSerializer()
     region = serializers.SlugRelatedField(slug_field='title', read_only=True)
     place = serializers.SlugRelatedField(slug_field='city', read_only=True)
@@ -89,7 +91,7 @@ class AdvertListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Advert
-        fields = ('id', 'title', 'category', 'price', 'is_new', 'region', 'place', 'main_photo', 'date', 'gallery', 'moderation','user')
+        fields = ('id', 'title', 'category', 'price', 'is_new', 'region', 'place', 'date', 'gallery', 'moderation','user')
 
 
 class AdvertDetailSerializer(serializers.ModelSerializer):
@@ -138,3 +140,36 @@ class AdvertUpdateSerializer(serializers.ModelSerializer):
         model = Advert
         exclude = ('date', 'slug', 'user')
 
+class MessageSerializer(serializers.ModelSerializer):
+    # Список сообщений
+
+    pub_date = serializers.DateTimeField(format='%d.%m.%Y, %H:%M')
+
+    class Meta:
+        model = Message
+        fields = "__all__"
+
+class MessageCreateSerializer(serializers.ModelSerializer):
+    # Добавление сообщения
+
+    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    class Meta:
+        model = Message
+        exclude = ('pub_date', 'is_readed')
+
+class ChatSerializer(serializers.ModelSerializer):
+    # Вывод бесед
+
+    advert = AdvertListSerializer()
+    messages = MessageSerializer(many=True)
+    class Meta:
+        model = Chat
+        fields = ('id', 'advert', 'seller', 'buyer', 'messages')
+
+class ChatCreateSerializer(serializers.ModelSerializer):
+    # Добавление беседы
+
+    buyer = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    class Meta:
+        model = Chat
+        exclude = ('slug',)

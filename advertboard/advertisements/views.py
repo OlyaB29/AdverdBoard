@@ -1,8 +1,9 @@
 from django.db.models import OuterRef, Subquery
 from rest_framework import generics, permissions
-from . models import Advert, Gallery, Photo, Category, Region, Value
+from .models import Advert, Gallery, Photo, Category, Region, Value, Chat, Message
 from .serializers import AdvertListSerializer, AdvertDetailSerializer, CategoryListSerializer, RegionSerializer, \
-    ValueSerializer, AdvertUpdateSerializer, PhotoSerializer, AdvertCreateSerializer
+    ValueSerializer, AdvertUpdateSerializer, PhotoSerializer, AdvertCreateSerializer, ChatSerializer, \
+    ChatCreateSerializer, MessageSerializer, MessageCreateSerializer
 from django.contrib.auth.models import User
 
 
@@ -103,3 +104,43 @@ class PhotoDeleteView(generics.DestroyAPIView):
 
     def get_queryset(self):
         return Photo.objects.filter(gallery__advert__user=self.request.user)
+
+
+class UserChatListView(generics.ListAPIView):
+    # Вывод списка бесед пользователя
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ChatSerializer
+
+    def get_queryset(self):
+        chats = Chat.objects.filter(buyer=self.request.user) | Chat.objects.filter(seller=self.request.user)
+        return chats
+
+class ChatCreateView(generics.CreateAPIView):
+    # Создание беседы
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Chat.objects.all()
+    serializer_class = ChatCreateSerializer
+
+class ChatDeleteView(generics.DestroyAPIView):
+    # Удаление беседы пользователя
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'id'
+    def get_queryset(self):
+        chats = Chat.objects.filter(buyer=self.request.user) | Chat.objects.filter(seller=self.request.user)
+        return chats
+
+class MessageListView(generics.ListAPIView):
+    # Вывод списка сообщений чата
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = MessageSerializer
+
+    def get_queryset(self):
+        messages = Message.objects.filter(chat__id=self.kwargs['chat_id'])
+        messages.filter(is_readed=False).exclude(author=self.request.user).update(is_readed=True)
+        return messages
+
+class MessageCreateView(generics.CreateAPIView):
+    # Создание сообщения
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = Message.objects.all()
+    serializer_class = MessageCreateSerializer

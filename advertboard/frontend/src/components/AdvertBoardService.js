@@ -68,7 +68,7 @@ export default class AdvertBoardService {
 		return axios.get(url,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => response.data).catch((error)=>this.errorHandler(error));
 	}
 
-	getSeller(pk) {
+	getFreeProfile(pk) {
 		const url = `${API_URL}/api/user_profile/free/${pk}`;
 		return axios.get(url).then(response => response.data);
 	}
@@ -112,5 +112,33 @@ export default class AdvertBoardService {
 		const url = `${API_URL}/api/user_profile/update/${pk}/`;
 		return axios.patch(url, profile,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => "ok").catch((error)=>this.errorHandler(error));
 	}
+
+	getUserChats(access) {
+		const url = `${API_URL}/api/chats`;
+		return axios.get(url,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => response.data).catch((error)=>this.errorHandler(error));
+	}
+
+	createChat(chat, access) {
+		const url = `${API_URL}/api/create-chat/`;
+		return axios.post(url, chat, { headers: {"Authorization" : `JWT ${access}`}}).then(response => "ok").catch((error)=>this.errorHandler(error));
+	}
+
+	deleteChat(pk, access) {
+		const url = `${API_URL}/api/delete-chat/${pk}`;
+		return axios.delete(url, { headers: {"Authorization" : `JWT ${access}`}}).then(response => "ok").catch((error)=>this.errorHandler(error));
+	}
+
+	getChatMessages(pk, access) {
+		const url = `${API_URL}/api/messages/${pk}`;
+		return axios.get(url,{ headers: {"Authorization" : `JWT ${access}`}}).then(response => response.data).catch((error)=>this.errorHandler(error));
+	}
+
+	createMessage(message, access) {
+		const url = `${API_URL}/api/create-message/`;
+		return axios.post(url, message, { headers: {"Authorization" : `JWT ${access}`}}).then(response => "ok").catch((error)=>this.errorHandler(error));
+	}
+
+
+
 }
 

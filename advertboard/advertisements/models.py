@@ -9,7 +9,7 @@ from django.dispatch import receiver
 from PIL import Image
 from datetime import datetime
 from django.utils import timezone
-from . transliteration import transliteration
+from .transliteration import transliteration
 
 
 class Characteristic(models.Model):
@@ -29,7 +29,8 @@ class Characteristic(models.Model):
 class Value(models.Model):
     # Допустимые значения характеристик
     val = models.CharField("Значение", max_length=50, unique=True)
-    characteristic = models.ForeignKey(Characteristic, verbose_name="Характеристика", related_name='values', on_delete=models.CASCADE)
+    characteristic = models.ForeignKey(Characteristic, verbose_name="Характеристика", related_name='values', null=True,
+                                       on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} - {}'.format(self.characteristic.name, self.val)
@@ -100,7 +101,7 @@ class Advert(models.Model):
     category = TreeForeignKey(Category, verbose_name="Категория", related_name='adverts', on_delete=models.CASCADE)
     charvalues = ChainedManyToManyField(Value, chained_field="category",
                                         chained_model_field="characteristic__categories", auto_choose=True,
-                                        horizontal=True, verbose_name="Значения характеристик", blank=True, null=True)
+                                        horizontal=True, verbose_name="Значения характеристик", blank=True)
     description = models.TextField("Описание", max_length=5000)
     is_new = models.CharField("Состояние", max_length=5, choices=[('1', 'Новое'), ('2', 'Б/у')])
     price = models.DecimalField("Цена", max_digits=8, decimal_places=2, blank=True, null=True)
@@ -123,6 +124,7 @@ class Advert(models.Model):
     class Meta:
         verbose_name = "Объявление"
         verbose_name_plural = "Объявления"
+        ordering = ('-date',)
 
 
 class Gallery(models.Model):
@@ -138,12 +140,15 @@ class Gallery(models.Model):
         verbose_name = "Галерея"
         verbose_name_plural = "Галереи"
 
+
 @receiver(post_save, sender=Advert)
 def create_advert_gallery(sender, instance, created, **kwargs):
     # Создание галереи при создании объявления
     if created:
         Advert.objects.filter(id=instance.id).update(slug=str(instance.id) + '-' + transliteration(instance.title))
-        Gallery.objects.create(advert=instance, slug='gallery-{}-{}'.format(transliteration(instance.title), instance.id))
+        Gallery.objects.create(advert=instance,
+                               slug='gallery-{}-{}'.format(transliteration(instance.title), instance.id))
+
 
 @receiver
 def save_advert_gallery(sender, instance, **kwargs):
@@ -166,11 +171,10 @@ class Photo(models.Model):
     name = models.CharField("Имя", max_length=50, null=True, blank=True)
     gallery = models.ForeignKey(Gallery, verbose_name="Галерея", related_name='photos', on_delete=models.CASCADE)
     image = models.ImageField("Фото", upload_to="advertisements/")
-    slug = models.SlugField("url", max_length=50, unique=True)
+    slug = models.SlugField("url", max_length=100, unique=True)
 
     def __str__(self):
         return '{}'.format(self.image.name)[15:]
-
 
     def save(self, *args, **kwargs):
         trans_gallery = transliteration(self.gallery)
@@ -190,7 +194,38 @@ class Photo(models.Model):
         verbose_name_plural = "Фотографии"
         ordering = ('id',)
 
+class Chat(models.Model):
+    # Беседы создателей объявлений и покупателей
 
+    advert = models.ForeignKey(Advert, verbose_name="Объявление", related_name='chats', on_delete=models.DO_NOTHING)
+    seller = models.ForeignKey(User, verbose_name="Продавец", related_name='sell_chats', on_delete=models.CASCADE)
+    buyer = models.ForeignKey(User, verbose_name="Покупатель", related_name='buy_chats', on_delete=models.CASCADE)
+    slug = models.SlugField("url", max_length=50, unique=True)
 
+    def __str__(self):
+        return '{}-{}'.format(self.advert.title, self.buyer.username)
 
+    def save(self, *args, **kwargs):
+        self.slug = '{}-{}'.format(self.advert.id, self.buyer.username)
+        super().save(*args, **kwargs)
 
+    class Meta:
+        verbose_name = "Чат"
+        verbose_name_plural = "Чаты"
+
+class Message(models.Model):
+    # Сообщения
+
+    chat = models.ForeignKey(Chat, verbose_name="Чат", related_name='messages', on_delete=models.CASCADE)
+    author = models.ForeignKey(User, verbose_name="Автор", related_name='messages', on_delete=models.CASCADE)
+    text = models.TextField("Сообщение", max_length=5000)
+    pub_date = models.DateTimeField("Дата и время сообщения", auto_now_add=True)
+    is_readed = models.BooleanField("Прочитано", default=False)
+
+    def __str__(self):
+        return self.text
+
+    class Meta:
+        verbose_name = "Сообщение"
+        verbose_name_plural = "Сообщения"
+        ordering = ('pub_date',)

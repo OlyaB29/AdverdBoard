@@ -40,3 +40,4 @@ class AvatarUpdateView(generics.UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Profile.objects.all()
     serializer_class = AvatarUpdateSerializer
+    lookup_field = 'user_id'

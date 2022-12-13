@@ -1,6 +1,6 @@
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
-from . models import Category, Characteristic, Value, Advert, Place, Region, Gallery, Photo
+from . models import Category, Characteristic, Value, Advert, Place, Region, Gallery, Photo, Chat, Message
 
 
 @admin.register(Category)
@@ -72,3 +72,21 @@ class PhotoAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'gallery', 'image')
     list_filter = ('gallery',)
     prepopulated_fields = {'slug': ('name',)}
+
+
+@admin.register(Chat)
+class ChatAdmin(admin.ModelAdmin):
+    #  Беседы
+    list_display = ('id', 'advert', 'seller', 'buyer')
+    list_filter = ('advert', )
+    search_fields = ('advert', 'buyer')
+    prepopulated_fields = {'slug': ('advert',)}
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    #  Сообщения
+    list_display = ('id', 'chat', 'author', 'pub_date', 'text', 'is_readed')
+    list_filter = ('chat', )
+    list_editable = ('is_readed',)
+    search_fields = ('chat', )
+

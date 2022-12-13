@@ -1,6 +1,5 @@
 import React from 'react';
-import {BrowserRouter,Route, Routes} from 'react-router-dom';
-
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import AdvertList from "./components/AdvertList";
 import AdvertDetail from "./components/AdvertDetail";
 import {LoginPage} from "./components/LoginPage";
@@ -16,6 +15,8 @@ import Registration from "./components/Registration";
 import ProfileUpdate from "./components/ProfileUpdate";
 import AdvertCreateUpdate from "./components/AdvertCreateUpdate";
 import SellerAdverts from "./components/SellerAdverts";
+import Messages from "./components/Messages";
+import MessToSeller from "./components/MessToSeller";
 
 
 function BaseLayout() {
@@ -55,6 +56,14 @@ function BaseLayout() {
                     <Route path='profile/adverts' element={
                         <RequireAuth>
                             <UserAdverts/>
+                        </RequireAuth>}/>
+                    <Route path='messages' element={
+                        <RequireAuth>
+                            <Messages/>
+                        </RequireAuth>}/>
+                    <Route path='/mess-to-seller/:id' element={
+                        <RequireAuth>
+                            <MessToSeller/>
                         </RequireAuth>}/>
                 </Routes>
             </div>

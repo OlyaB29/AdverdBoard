@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Route, useNavigate} from 'react-router-dom';
+import {Route, useLocation, useNavigate} from 'react-router-dom';
 import {FaSearch, FaUserAlt} from "react-icons/fa";
 
 import {useAuth} from "../hook/useAuth";
@@ -14,21 +14,55 @@ export default function Top() {
     const user = localStorage.getItem('user')
     const {signOut} = useAuth();
     const navigate = useNavigate();
-
-    const [categories, setCategories] = useState([])
+    const location = useLocation();
+    const [access, setAccess] = useState();
+    const [newMessCount, setNewMessCount] = useState();
+    const [isUpdate, setIsUpdate] = useState(false);
+    console.log(localStorage.getItem('user'));
+    const [categories, setCategories] = useState([]);
 
     useEffect(() => {
         advertBoardService.getCategories().then(function (result) {
             console.log(result.data);
             setCategories(result.data)
-        })
+        });
     }, []);
+
+    useEffect(() => {
+        setIsUpdate(false);
+        if (!access) {
+            setAccess(localStorage.getItem('accessToken'));
+        }
+        if (access) {
+            advertBoardService.getUserChats(access).then(function (result) {
+                console.log(result);
+                if (result) {
+                    if (result.access) {
+                        localStorage.setItem('accessToken', result.access);
+                        setAccess(result.access);
+                        localStorage.setItem('refreshToken', result.refresh);
+                    } else {
+                        let newMess = result.map(chat => chat.messages.filter(mess => (mess.author !== Number(localStorage.getItem('userId')) && !mess.is_readed)).length);
+                        setNewMessCount(newMess.reduce(function (sum, elem) {
+                            return sum + elem;
+                        }, 0));
+                    }
+                } else {
+                    navigate('/login', {replace: true, state: {from: location}});
+                }
+            })
+        }
+    }, [access, isUpdate]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const form = e.target;
         const query = form.search.value;
         navigate('/search', {state: {query: query}})
+    }
+
+    const countUpdate = () => {
+        setIsUpdate(true);
     }
 
     return (
@@ -78,10 +112,14 @@ export default function Top() {
                         ? <div className='options'>
                             <li className="nav-item">
                                 <div className="dropdown">
-                                    <FaUserAlt className='user-icon'/>
+                                    <FaUserAlt className='user-icon' onMouseOver={countUpdate}/>
                                     <div className="dropdown-content">
                                         <a href={`/profile/${localStorage.getItem('userId')}`}>Мой профиль</a>
                                         <a href="/profile/adverts">Мои объявления</a>
+                                        <a href="/messages">Мои сообщения
+                                            {newMessCount > 0 &&
+                                                <small
+                                                    className="new-count"> {newMessCount}</small>}</a>
                                     </div>
                                 </div>
                             </li>

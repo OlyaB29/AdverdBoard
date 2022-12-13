@@ -1,35 +1,42 @@
 import React, {useEffect, useState} from 'react';
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {Navigate, useLocation, useNavigate, useParams} from "react-router-dom";
 import AdvertBoardService from './AdvertBoardService';
+import {useForm} from "react-hook-form";
 
 const advertBoardService = new AdvertBoardService();
 
 
-function AdvertDetail() {
+function AdvertDetail(props) {
 
     const [advert, setAdvert] = useState({
         gallery: {photos: []},
         category: {id: null, name: null, parent: {id: null, name: null, parent: null}, slug: null}
     });
     const {id} = useParams();
+    const navigate = useNavigate()
+    const location = useLocation();
     const [isShowPhones, setIsShowPhones] = useState(false);
     const [isShowModal, setIsShowModal] = useState(false);
+    const [isShowCreate, setIsShowCreate] = useState(location.state?.isShowCreate ? location.state.isShowCreate : false);
     const [seller, setSeller] = useState({});
     const [access, setAccess] = useState(localStorage.getItem('accessToken'));
     const [isDelete, setIsDelete] = useState(false);
-    const navigate = useNavigate()
-    const location = useLocation();
+    const {register, formState: {errors, isValid}, handleSubmit, reset} = useForm({mode: "onBlur"});
+    const [isSend, setIsSend] = useState(false);
+    const [data, setData] = useState({});
 
 
     useEffect(() => {
         advertBoardService.getAdvert(id).then(function (result) {
             console.log(result);
             setAdvert(result);
-            advertBoardService.getSeller(result.user).then(function (res) {
+            advertBoardService.getFreeProfile(result.user).then(function (res) {
                 console.log(res);
                 setSeller(res);
+                if (res.user.username === localStorage.getItem('user')) {
+                    setIsShowPhones(true);
+                }
             })
-
         })
     }, [id]);
 
@@ -45,26 +52,86 @@ function AdvertDetail() {
         setIsShowModal(!isShowModal);
     }
 
+    const modalCreate = () => {
+        setIsShowCreate(!isShowCreate);
+    }
+
     useEffect(() => {
         if (isDelete) {
-        advertBoardService.deleteAdvert(id, access).then(function (result) {
-            if (result) {
-                if (result.access) {
-                    console.log(result)
-                    localStorage.setItem('accessToken', result.access);
-                    setAccess(result.access);
-                    localStorage.setItem('refreshToken', result.refresh);
+            advertBoardService.deleteAdvert(id, access).then(function (result) {
+                if (result) {
+                    if (result.access) {
+                        console.log(result)
+                        localStorage.setItem('accessToken', result.access);
+                        setAccess(result.access);
+                        localStorage.setItem('refreshToken', result.refresh);
+                    } else {
+                        navigate('/profile/adverts', {replace: true})
+                    }
                 } else {
-                    navigate('/profile/adverts', {replace: true})
+                    navigate('/login', {replace: true, state: {from: location}});
                 }
-            } else {
-                navigate('/login', {replace: true, state: {from: location}});
-            }
-        });}
+            });
+        }
     }, [isDelete, access])
 
     const deleteAdvert = () => {
         setIsDelete(true)
+    }
+
+    useEffect(() => {
+        if (isSend) {
+            const chat = {'advert': id, 'seller': advert.user};
+            advertBoardService.createChat(chat, access).then(function (res) {
+                if (res) {
+                    if (res.access) {
+                        console.log(res)
+                        localStorage.setItem('accessToken', res.access);
+                        setAccess(res.access);
+                        localStorage.setItem('refreshToken', res.refresh);
+                    } else {
+                        advertBoardService.getUserChats(access).then(function (result) {
+                            if (result) {
+                                if (result.access) {
+                                    localStorage.setItem('accessToken', res.access);
+                                    setAccess(res.access);
+                                    localStorage.setItem('refreshToken', res.refresh);
+                                } else {
+                                    const lastChat = result.sort((a, b) => b.id > a.id ? 1 : -1)[0];
+                                    data['chat'] = lastChat.id;
+                                    advertBoardService.createMessage(data, access).then(function (r) {
+                                        if (r) {
+                                            if (r.access) {
+                                                console.log(r)
+                                                localStorage.setItem('accessToken', r.access);
+                                                setAccess(r.access);
+                                                localStorage.setItem('refreshToken', r.refresh);
+                                            } else {
+                                                setIsSend(false);
+                                                alert('Сообщение отправлено');
+                                            }
+                                        } else {
+                                            navigate('/login', {replace: true, state: {from: location}});
+                                        }
+                                    });
+                                }
+                            } else {
+                                navigate('/login', {replace: true, state: {from: location}});
+                            }
+                        })
+                    }
+                } else {
+                    navigate('/login', {replace: true, state: {from: location}});
+                }
+            });
+        }
+    }, [isSend, access, data])
+
+    const onSubmit = (data) => {
+        alert(JSON.stringify(data));
+        setIsSend(true);
+        setData(data);
+        setIsShowCreate(false);
     }
 
     return (
@@ -117,10 +184,15 @@ function AdvertDetail() {
                 </div>
             </div>
             <div className="row">
-                <div className="phones">
-                    <div className="col-md-5">
+                <div className="col-md-5">
+                    <div className="phones">
                         {phones}
-                        <button className='btn btn-success-outline' onClick={togglePhones}>Связаться</button>
+                        {seller.user && seller.user.username !== localStorage.getItem('user') && <>
+                            <button className='btn btn-success-outline' onClick={togglePhones}>Позвонить</button>
+                            <button className='btn btn-success-outline'
+                                    onClick={() => navigate(`/mess-to-seller/${advert.id}`)}>Написать
+                            </button>
+                        </>}
                     </div>
                 </div>
                 <div className="col-md-7">
@@ -146,13 +218,40 @@ function AdvertDetail() {
                             <h5 className="mb-0">Вы уверены, что хотите удалить это объявление?</h5>
                         </div>
                         <div className="modal-footer flex-nowrap p-0">
-                            <button type="button" className="btn btn-lg col-6 m-0" style={{borderBottomLeftRadius: 25}}
+                            <button type="button" className="btn btn-lg col-6 m-0"
+                                    style={{borderBottomLeftRadius: 25}}
                                     onClick={deleteAdvert}>
                                 <strong>Да, удалить</strong></button>
                             <button type="button" className="btn btn-lg col-6" style={{borderBottomRightRadius: 25}}
                                     onClick={modal}>
                                 <strong>Нет, спасибо</strong></button>
                         </div>
+                    </div>
+                </div>}
+            {isShowCreate &&
+                <div className="modal d-block py-5">
+                    <div className="modal-content-mess rounded-3 shadow">
+                        <div>
+                            <a href={`/adverts/seller/${advert.user}`}> {seller.name ? seller.name : (seller.user && seller.user.username)}</a>
+                        </div>
+                        <form className="advert-mess-form" onSubmit={handleSubmit(onSubmit)}>
+                            <div className="modal-body">
+                                <textarea placeholder="Напишите сообщение" {...register("text", {
+                                    required: true,
+                                    maxLength: {value: 5000, message: "Максимум 5000 символов"}
+                                })}/>
+                                {errors?.text?.message &&
+                                    <div className="error">
+                                        <p>{errors.text.message}</p>
+                                    </div>}
+                            </div>
+                            <div className="modal-footer flex-nowrap p-0">
+                                <button type="submit" className="btn btn-lg col-5">
+                                    <strong>Отправить</strong></button>
+                                <button type="button" className="btn-2 btn-lg col-5" onClick={modalCreate}>
+                                    <strong>Закрыть</strong></button>
+                            </div>
+                        </form>
                     </div>
                 </div>}
         </div>

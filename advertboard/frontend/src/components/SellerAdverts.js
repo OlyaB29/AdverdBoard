@@ -15,7 +15,7 @@ function SellerAdverts() {
     useEffect(() => {
         advertBoardService.getAdverts().then(function (result) {
             setAdverts(result.filter(advert => advert.user === Number(id)));
-            advertBoardService.getSeller(id).then(function (res) {
+            advertBoardService.getFreeProfile(id).then(function (res) {
             console.log(res);
             setSeller(res);
             })
@@ -25,12 +25,10 @@ function SellerAdverts() {
 
     return (
         <div className="advert_list">
-
-
             <div className="row" >
                  <div className="col-md-3">
                     <div className='description'>
-                        <p><i>Имя: </i> {seller.name}</p>
+                        <p><i>Имя: </i> {seller.name ? seller.name : "Пользователь"}</p>
                         <p><i>Имя пользователя: </i>{seller.user && seller.user.username}</p>
                         <p><small>Дата регистрации: {seller.date}</small></p>
                     </div>
@@ -45,7 +43,10 @@ function SellerAdverts() {
                     </div>
                 </div>
             </div>
-            <h1>Все объявления продавца </h1>
+            {adverts.length
+                ? <h1>Все объявления продавца</h1>
+                : <h3 className='sell'>У продавца нет актуальных объявлений</h3>
+            }
             <OutputAdverts adverts={adverts}/>
         </div>
     );

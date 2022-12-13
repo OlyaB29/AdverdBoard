@@ -166,8 +166,6 @@ export default function AdvertCreateUpdate() {
         !photos.length && setRefe(copy);
         photos.map((photo, index) => {
             const reader = new FileReader();
-            console.log(index);
-            console.log(photo.name);
             reader.onload = function () {
                 // img[index].current.src = reader.result;
                 copy.push(reader.result);

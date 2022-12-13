@@ -35,7 +35,7 @@ const LoginPage = () => {
         <div>
             <main className="form-signin m-auto">
                 <form onSubmit={HandleSubmit}>
-                    <h2>Авторизуйтесь, пожалуйста</h2>
+                    <h2>Авторизуйтесь или <a href="/registration">зарегистрируйтесь</a></h2>
                     {error && <p className="error">{error}</p>}
                     <div className="form-floating">
                         <input className="form-control" name='username' placeholder="Имя пользователя"/>

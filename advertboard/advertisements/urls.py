@@ -17,4 +17,9 @@ urlpatterns = [
     path('create-photo/', views.PhotoCreateView.as_view()),
     path('update-photo/<int:id>', views.PhotoUpdateView.as_view()),
     path('delete-photo/<int:id>', views.PhotoDeleteView.as_view()),
+    path('chats/', views.UserChatListView.as_view()),
+    path('create-chat/', views.ChatCreateView.as_view()),
+    path('delete-chat/<int:id>', views.ChatDeleteView.as_view()),
+    path('messages/<int:chat_id>', views.MessageListView.as_view()),
+    path('create-message/', views.MessageCreateView.as_view()),
 ]

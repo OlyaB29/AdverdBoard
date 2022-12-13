@@ -75,14 +75,14 @@ form .btn, form .form-control{
     display: none;
     position: absolute;
     background-color: #e4fae4;
-    width: 200px;
+    width: 210px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
     border-radius: 25px;
 }
 
 
-.dropdown-content a {
+.dropdown-content a, .dropright-content a, .dropright-content-ch a {
     color: #60385b;
     padding: 8px 16px;
     text-decoration: none;
@@ -107,18 +107,10 @@ form .btn, form .form-control{
     position: absolute;
     background-color: #e4fae4;
     width: 200px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
     z-index: 1;
     border-radius: 25px;
     right: 180px;
-}
-
-
-.dropright-content a {
-    color: #60385b;
-    padding: 8px 16px;
-    text-decoration: none;
-    display: block;
 }
 
 .dropright-content a:hover {
@@ -143,14 +135,6 @@ form .btn, form .form-control{
     right: 180px;
 }
 
-
-.dropright-content-ch a {
-    color: #60385b;
-    padding: 8px 16px;
-    text-decoration: none;
-    display: block;
-}
-
 .dropright-content-ch a:hover {
     background-color: #ddd;
 }
@@ -165,7 +149,7 @@ header .presentation {
     background: url(img/изображение_viber_2022-10-29_22-11-58-039.png) no-repeat center center;
 }
 
-h1 {
+h1, .advert_list h3 {
     text-align: center;
 }
 
@@ -322,13 +306,9 @@ scroll-img {
 
 .phones button, .profile button {
     margin-top: 10px;
-    border-radius: 25px;
-    width: 150px;
-    border-color: rgb(113, 157, 111);
-    border-width: initial;
 }
 
-.advert-user button {
+.advert-user button, .phones button, .profile button {
     border-radius: 25px;
     width: 150px;
     border-color: rgb(113, 157, 111);
@@ -349,8 +329,9 @@ scroll-img {
     margin: 0 auto;
 }
 
-.advert-user a {
+.advert-user a, .top-mess a, .modal-content-mess a, .form-signin a {
     color: indigo;
+    text-decoration: none;
 }
 
 .profile button {
@@ -454,7 +435,7 @@ scroll-img {
     overflow: auto;
 }
 
-.modal-content, .modal-content-reg, .modal-content-moder {
+.modal-content, .modal-content-reg, .modal-content-moder, .modal-content-mess {
     width: 400px;
     height: 200px;
     position: relative;
@@ -474,21 +455,36 @@ scroll-img {
     padding-top: 15px !important;
 }
 
-.modal-content button, .modal-content-reg button, .modal-content-moder button {
-    background: rgba(196, 156, 190, 0.7);
-    /*border-top-left-radius: 25px;*/
-    color: indigo;
-    /*border-color: indigo;*/
+.modal-content-mess {
+    width: 450px !important;
+    height: 320px !important;
 }
 
-.modal-content button:hover, .modal-content-reg button:hover, .modal-content-moder button:hover {
+.modal-content-mess .modal-body {
+    margin: 0 0;
+    padding-left: 0;
+    height: 215px;
+}
+
+.modal-content button, .modal-content-reg button, .modal-content-moder button, .modal-content-mess button {
+    background: rgba(196, 156, 190, 0.7);
+    color: indigo;
+}
+
+.modal-content button:hover, .modal-content-reg button:hover, .modal-content-moder button:hover, .modal-content-mess button:hover {
     background: rgb(182, 218, 181);
 }
 
-.modal-content-reg button, .modal-content-moder button {
+.modal-content-reg button, .modal-content-moder button, .modal-content-mess button {
     border-radius: 25px;
     width: 200px;
     margin: auto;
+}
+
+.modal-content-mess .btn-2 {
+    background: rgba(238, 215, 234, 0.7);
+    border-color: indigo ;
+    border-style: groove;
 }
 
 .selected-photo {
@@ -518,7 +514,7 @@ scroll-img {
     color: #d2fad0;
 }
 
-.selected-photo:after, .delete-photo,
+.selected-photo:after, .delete-photo, .delete-chat,
 .add-avatar:after, .delete-avatar {
     opacity: 0;
     transition: 0.7s;
@@ -537,7 +533,8 @@ scroll-img {
 .selected-photo:hover:after,
 .selected-photo:hover .delete-photo,
 .add-avatar:hover:after,
-.add-avatar:hover .delete-avatar {
+.add-avatar:hover .delete-avatar,
+.chat-detail:hover .delete-chat{
     opacity: 1;
 }
 
@@ -651,6 +648,218 @@ scroll-img {
     align-items: center;
     justify-content: center;
 }
+
+.chats {
+    float: left;
+    width: 27%;
+    height: 700px;
+    background-color: #f1f1f1;
+    border-bottom-left-radius: 25px;
+    border-top-left-radius: 25px;
+    border-right-color: indigo;
+    border-right-style: dashed;
+    border-width: thin;
+}
+
+.top-chats {
+    height: 90px;
+    position: relative;
+}
+
+.top-chats p {
+    position: absolute;
+    top: 40%;
+    color: #6e6e6e;
+    font-size: 15px;
+}
+
+.scroll-chats, .scroll-messages {
+    overflow-y: scroll;
+    overflow-x: clip;
+    scroll-behavior: smooth;
+}
+
+.chat-detail, .top-mess, .top-chats, .scroll-messages {
+    padding-left: 20px;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    border-bottom-color: indigo;
+    border-bottom-style: dashed;
+    border-width: thin;
+}
+
+.chat-detail {
+    position: relative;
+    cursor: pointer;
+}
+
+.delete-chat {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    z-index: 9;
+}
+
+.chat-detail:hover {
+    background-color: rgba(245, 226, 242, 0.91);
+}
+
+.new-count {
+    background-color: rgba(250, 46, 46, 0.88);
+    border-radius: 50px;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    bottom: 10px;
+    right: 1px;
+    color: #f1f1f1;
+    text-align: center;
+    vertical-align: center;
+    padding-top: 5px;
+}
+
+.messages {
+    float: left;
+    width: 73%;
+    background-color: rgba(245, 226, 242, 0.91);
+    border-bottom-right-radius: 25px;
+    border-top-right-radius: 25px;
+    height: 700px;
+}
+
+.scroll-messages {
+    padding-right: 15px;
+    padding-left: 15px;
+    height: 530px;
+}
+
+.scroll-messages .mess-text {
+    border-radius: 15px;
+    border-color: indigo;
+    border-style: dashed;
+    border-width: thin;
+    padding: 7px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.top-mess {
+    background-color: #f1f1f1;
+    border-top-right-radius: 25px;
+    height: 90px;
+    position: relative;
+}
+
+.top-mess .row {
+    width: 100%;
+}
+
+.top-mess .companion {
+    width: 30%;
+}
+
+.top-mess .companion p {
+    padding-left: 10px;
+    position: absolute;
+    top: 35%;
+}
+
+.top-mess a {
+    display: inline-flex;
+    text-decoration: none;
+    width: 100%;
+}
+
+.top-mess .advert {
+    width: 70%;
+}
+
+.top-mess .not-advert {
+    display: inline-flex;
+    width: 70%;
+}
+
+.top-mess ul {
+    list-style: none;
+    width: 85%;
+    text-align: right;
+}
+
+.top-mess img {
+    margin: 0 auto;
+    object-fit: cover;
+}
+
+.message-block {
+    width: 100%;
+    margin-top: 5px;
+    display: inline-block;
+}
+
+.my-message {
+    float: right;
+}
+
+.my-message, .companion-message {
+    max-width: 55%;
+}
+
+.companion-message {
+    float: left;
+}
+
+.my-message .mess-text {
+    background-color: rgb(216, 238, 216);
+}
+
+.companion-message .mess-text{
+    background-color: #f1f1f1;
+}
+
+.mess-form {
+    background-color: #f1f1f1;
+    border-bottom-right-radius: 25px;
+    height: 80px;
+    float: bottom;
+}
+
+.mess-form input, .mess-form button, .advert-mess-form textarea {
+    height: 40px;
+    border-color: indigo;
+    border-style: dashed;
+    border-width: thin;
+    border-radius: 25px;
+}
+
+.mess-form input {
+    width: 77%;
+    padding-left: 10px;
+    margin: 20px 10px 0 20px;
+}
+
+.mess-form button {
+    width: 17%;
+}
+
+.mess-form .error {
+    font-size: 12px;
+    margin-left: 25px;
+}
+
+.advert-mess-form textarea {
+    height: 170px !important;
+    width: 390px;
+    padding-left: 10px;
+    padding-top: 10px;
+}
+
+
+/*.row-chats:after {*/
+/*    content: "";*/
+/*    display: table;*/
+/*    clear: both;*/
+/*}*/
 
 footer {
     text-align: center;
