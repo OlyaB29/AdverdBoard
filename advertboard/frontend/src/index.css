@@ -46,7 +46,7 @@ form .btn:hover {
     background-color: #719d6f !important;
 }
 
-form .btn, form .form-control{
+form .btn, form .form-control {
     border-radius: 25px;
 }
 
@@ -64,6 +64,8 @@ form .btn, form .form-control{
     margin-left: 30px;
     cursor: pointer;
     transition: color 500ms ease;
+    margin-right: 9px;
+    margin-top: 4px;
 }
 
 .dropdown {
@@ -76,7 +78,7 @@ form .btn, form .form-control{
     position: absolute;
     background-color: #e4fae4;
     width: 210px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
     border-radius: 25px;
 }
@@ -89,12 +91,17 @@ form .btn, form .form-control{
     display: block;
 }
 
-.dropdown-content a:hover {background-color: #ddd;}
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
 
-.dropdown:hover .dropdown-content {display: block;}
+.dropdown:hover .dropdown-content {
+    display: block;
+}
 
 .dropdown:hover,
-.user-icon.active {color: rgb(113, 157, 111);
+.user-icon.active {
+    color: rgb(113, 157, 111);
 }
 
 .drop {
@@ -107,7 +114,7 @@ form .btn, form .form-control{
     position: absolute;
     background-color: #e4fae4;
     width: 200px;
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 1;
     border-radius: 25px;
     right: 180px;
@@ -117,7 +124,9 @@ form .btn, form .form-control{
     background-color: #ddd;
 }
 
-.drop:hover .dropright-content {display: block;}
+.drop:hover .dropright-content {
+    display: block;
+}
 
 .drop-ch {
     display: grid;
@@ -129,7 +138,7 @@ form .btn, form .form-control{
     position: absolute;
     background-color: #e4fae4;
     width: 200px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
     border-radius: 25px;
     right: 180px;
@@ -139,7 +148,9 @@ form .btn, form .form-control{
     background-color: #ddd;
 }
 
-.drop-ch:hover .dropright-content-ch {display: block;}
+.drop-ch:hover .dropright-content-ch {
+    display: block;
+}
 
 header .presentation {
     margin: 40px auto;
@@ -200,7 +211,7 @@ h1, .advert_list h3 {
 }
 
 .card li.mode {
-   color: red;
+    color: red;
 }
 
 .card a.card-link {
@@ -233,8 +244,8 @@ h1, .advert_list h3 {
 }
 
 .advert-detail text {
-   color: red;
-   margin-right: 20px;
+    color: red;
+    margin-right: 20px;
 }
 
 p.date {
@@ -294,7 +305,7 @@ scroll-img {
 }
 
 
-.description h5{
+.description h5 {
     text-decoration: underline;
 }
 
@@ -349,7 +360,7 @@ scroll-img {
     font-weight: bolder;
 }
 
- i {
+i {
     font-weight: normal !important;
 }
 
@@ -386,7 +397,7 @@ scroll-img {
 .add-avatar {
     position: relative;
     width: 200px;
-    height:200px;
+    height: 200px;
     margin: auto;
     margin-top: 20px;
     text-align: center;
@@ -421,7 +432,7 @@ scroll-img {
 }
 
 .form-signin, .form-register {
-     width: 500px;
+    width: 500px;
 }
 
 .modal {
@@ -483,7 +494,7 @@ scroll-img {
 
 .modal-content-mess .btn-2 {
     background: rgba(238, 215, 234, 0.7);
-    border-color: indigo ;
+    border-color: indigo;
     border-style: groove;
 }
 
@@ -534,7 +545,7 @@ scroll-img {
 .selected-photo:hover .delete-photo,
 .add-avatar:hover:after,
 .add-avatar:hover .delete-avatar,
-.chat-detail:hover .delete-chat{
+.chat-detail:hover .delete-chat {
     opacity: 1;
 }
 
@@ -552,6 +563,7 @@ scroll-img {
     padding: 0;
     margin: 0;
 }
+
 /*.selected-photo:hover .delete-photo {*/
 /*    display: block;*/
 /*    cursor: pointer;*/
@@ -581,31 +593,40 @@ scroll-img {
     margin-top: 10px !important;
     margin-bottom: 5px;
 }
+
 .multi-select__placeholder {
-     color: #444444 !important;
+    color: #444444 !important;
 }
+
 .multi-select__indicator-separator {
     display: none !important;
 }
+
 .multi-select__dropdown-indicator {
     width: 35px;
 }
+
 .multi-select__multi-value {
     border-radius: 15px !important;
 }
+
 .multi-select__multi-value__remove {
     color: rgba(112, 3, 90, 0.98) !important;
 }
+
 .multi-select__multi-value__remove:hover {
     background-color: rgba(196, 156, 190, 0.7) !important;
 }
+
 .multi-select__menu {
     color: #444444 !important;
 }
+
 .multi-select__option {
     height: 21px !important;
     padding-top: 0 !important;
 }
+
 .multi-select__option:hover {
     background-color: #6e6e6e !important;
     color: white !important;
@@ -630,6 +651,7 @@ scroll-img {
     border-color: rgba(148, 86, 140, 0.78);
     border-style: dotted;
 }
+
 .radio:hover {
     background-color: rgb(187, 224, 187);
 }
@@ -717,6 +739,16 @@ scroll-img {
     text-align: center;
     vertical-align: center;
     padding-top: 5px;
+}
+
+.new {
+    background-color: rgba(250, 46, 46, 0.88);
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 10px;
+    width: 10px;
+    border-radius: 50px;
 }
 
 .messages {
@@ -813,7 +845,7 @@ scroll-img {
     background-color: rgb(216, 238, 216);
 }
 
-.companion-message .mess-text{
+.companion-message .mess-text {
     background-color: #f1f1f1;
 }
 
@@ -854,12 +886,24 @@ scroll-img {
     padding-top: 10px;
 }
 
+.my-popup-content {
+    margin-left: 100px !important;
+    margin-bottom: 100px !important;
+    background: rgba(179, 224, 179, 0.91) !important;
+    width: max-content !important;
+    padding: 0 !important;
+    border-radius: 15px;
+    font-style: italic;
+}
 
-/*.row-chats:after {*/
-/*    content: "";*/
-/*    display: table;*/
-/*    clear: both;*/
-/*}*/
+.alert {
+    margin: 0;
+}
+
+.alert a {
+    text-decoration: none;
+    color: #366736;
+}
 
 footer {
     text-align: center;

@@ -26,7 +26,6 @@ class AdvertDetailView(generics.RetrieveAPIView):
     lookup_field = 'id'
 
 
-
 class AdvertCreateView(generics.CreateAPIView):
     # Добавление объявления
     permission_classes = [permissions.IsAuthenticated]
@@ -63,6 +62,7 @@ class UserAdvertDeleteView(generics.DestroyAPIView):
     def get_queryset(self):
         return Advert.objects.filter(user=self.request.user)
 
+
 # id=self.kwargs.get("pk"),
 class CategoryListView(generics.ListAPIView):
     # Вывод списка категорий
@@ -70,11 +70,13 @@ class CategoryListView(generics.ListAPIView):
     serializer_class = CategoryListSerializer
     queryset = Category.objects.all()
 
+
 class RegionListView(generics.ListAPIView):
     # Вывод списка регионов
     permission_classes = [permissions.AllowAny]
     serializer_class = RegionSerializer
     queryset = Region.objects.all()
+
 
 class ValueListView(generics.ListAPIView):
     # Вывод списка значений характеристик
@@ -82,11 +84,13 @@ class ValueListView(generics.ListAPIView):
     serializer_class = ValueSerializer
     queryset = Value.objects.all()
 
+
 class PhotoCreateView(generics.ListCreateAPIView):
     # Добавление фото
     permission_classes = [permissions.IsAuthenticated]
     queryset = Photo.objects.all()
     serializer_class = PhotoSerializer
+
 
 class PhotoUpdateView(generics.RetrieveUpdateAPIView):
     # Редактирование фотографии
@@ -96,6 +100,7 @@ class PhotoUpdateView(generics.RetrieveUpdateAPIView):
 
     def get_queryset(self):
         return Photo.objects.filter(gallery__advert__user=self.request.user)
+
 
 class PhotoDeleteView(generics.DestroyAPIView):
     # Удаление фотографии
@@ -112,8 +117,12 @@ class UserChatListView(generics.ListAPIView):
     serializer_class = ChatSerializer
 
     def get_queryset(self):
-        chats = Chat.objects.filter(buyer=self.request.user) | Chat.objects.filter(seller=self.request.user)
+        message = Message.objects.filter(chat=OuterRef("pk")).order_by('-pub_date')
+        chats = (Chat.objects.filter(buyer=self.request.user) | Chat.objects.filter(seller=self.request.user)).annotate(
+            last_message_date=Subquery(message.values('pub_date')[:1]), last_message_text=Subquery(message.values('text')[:1]))
+        chats = chats.order_by('-last_message_date')
         return chats
+
 
 class ChatCreateView(generics.CreateAPIView):
     # Создание беседы
@@ -121,13 +130,16 @@ class ChatCreateView(generics.CreateAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatCreateSerializer
 
+
 class ChatDeleteView(generics.DestroyAPIView):
     # Удаление беседы пользователя
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = 'id'
+
     def get_queryset(self):
         chats = Chat.objects.filter(buyer=self.request.user) | Chat.objects.filter(seller=self.request.user)
         return chats
+
 
 class MessageListView(generics.ListAPIView):
     # Вывод списка сообщений чата
@@ -138,6 +150,7 @@ class MessageListView(generics.ListAPIView):
         messages = Message.objects.filter(chat__id=self.kwargs['chat_id'])
         messages.filter(is_readed=False).exclude(author=self.request.user).update(is_readed=True)
         return messages
+
 
 class MessageCreateView(generics.CreateAPIView):
     # Создание сообщения

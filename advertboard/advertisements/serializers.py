@@ -162,9 +162,12 @@ class ChatSerializer(serializers.ModelSerializer):
 
     advert = AdvertListSerializer()
     messages = MessageSerializer(many=True)
+    last_message_date= serializers.DateTimeField()
+    last_message_text = serializers.CharField()
+
     class Meta:
         model = Chat
-        fields = ('id', 'advert', 'seller', 'buyer', 'messages')
+        exclude = ('slug',)
 
 class ChatCreateSerializer(serializers.ModelSerializer):
     # Добавление беседы

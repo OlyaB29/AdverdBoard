@@ -1,7 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Navigate, useLocation, useNavigate, useParams} from "react-router-dom";
 import AdvertBoardService from './AdvertBoardService';
 import {useForm} from "react-hook-form";
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 
 const advertBoardService = new AdvertBoardService();
 
@@ -24,6 +26,7 @@ function AdvertDetail(props) {
     const {register, formState: {errors, isValid}, handleSubmit, reset} = useForm({mode: "onBlur"});
     const [isSend, setIsSend] = useState(false);
     const [data, setData] = useState({});
+    const pop = useRef();
 
 
     useEffect(() => {
@@ -108,7 +111,7 @@ function AdvertDetail(props) {
                                                 localStorage.setItem('refreshToken', r.refresh);
                                             } else {
                                                 setIsSend(false);
-                                                alert('Сообщение отправлено');
+                                                pop.current.open();
                                             }
                                         } else {
                                             navigate('/login', {replace: true, state: {from: location}});
@@ -133,6 +136,8 @@ function AdvertDetail(props) {
         setData(data);
         setIsShowCreate(false);
     }
+
+    const closeTooltip = () => pop.current.close();
 
     return (
         <div className='advert-detail' key={advert.id}>
@@ -254,6 +259,12 @@ function AdvertDetail(props) {
                         </form>
                     </div>
                 </div>}
+            <Popup className="my-popup" ref={pop} closeOnDocumentClick onClose={closeTooltip}>
+                <div className="alert">
+                    <span>Сообщение отправлено</span><br/>
+                    <a href='' onClick={() => navigate(`/mess-to-seller/${advert.id}`)}><small >Посмотреть</small></a>
+                </div>
+            </Popup>
         </div>
     );
 }

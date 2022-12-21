@@ -113,6 +113,8 @@ export default function Top() {
                             <li className="nav-item">
                                 <div className="dropdown">
                                     <FaUserAlt className='user-icon' onMouseOver={countUpdate}/>
+                                    {newMessCount > 0 &&
+                                    <normall className="new"></normall>}
                                     <div className="dropdown-content">
                                         <a href={`/profile/${localStorage.getItem('userId')}`}>Мой профиль</a>
                                         <a href="/profile/adverts">Мои объявления</a>

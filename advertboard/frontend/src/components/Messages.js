@@ -6,6 +6,7 @@ import {BsXOctagon} from "react-icons/bs";
 
 const advertBoardService = new AdvertBoardService();
 
+
 function Messages() {
 
     const navigate = useNavigate();
@@ -26,28 +27,20 @@ function Messages() {
     const [isUpdate, setIsUpdate] = useState(false);
     const [data, setData] = useState({});
 
-
     useEffect(() => {
         setIsUpdate(false);
         advertBoardService.getUserChats(access).then(function (result) {
             console.log(result);
-            // const toastLiveExample = document.getElementById('liveToast');
-            // const toast = new bootstrap.Toast(toastLiveExample);
-            // toast.show();
             if (result) {
                 if (result.access) {
                     localStorage.setItem('accessToken', result.access);
                     setAccess(result.access);
                     localStorage.setItem('refreshToken', result.refresh);
                 } else {
-                    // const lastAdvert = result.sort((a, b) => b.id > a.id ? 1 : -1)[0];
-                    // console.log(result[0].messages[result[0].messages.length-1].pub_date);
-                    // const sortResult=result.sort((a, b) => a.messages[a.messages.length-1].pub_date > b.messages[b.messages.length-1].pub_date ? 1 : -1);
-                    // console.log(result[0].messages[result[0].messages.length-1].pub_date);
                     let chatsComp = Object.assign([], chats);
                     chatsComp.length = 0;
                     result.map((r, index) => {
-                        r['new_mess']=r.messages.filter(mess=>(mess.author!==Number(localStorage.getItem('userId')) && !mess.is_readed)).length;
+                        r['new_mess'] = r.messages.filter(mess => (mess.author !== Number(localStorage.getItem('userId')) && !mess.is_readed)).length;
                         advertBoardService.getFreeProfile(r.buyer !== Number(localStorage.getItem('userId'))
                             ? r.buyer : r.seller).then(function (res) {
                             r['companion'] = res;
@@ -58,7 +51,8 @@ function Messages() {
                                     setSelChat(chatsComp[0]);
                                     setChatId(chatsComp[0].id);
                                     setIsSelect(true);
-                                }
+                                    document.getElementById(chatsComp[0].id).style.backgroundColor='rgba(211, 188, 208, 0.7)';
+                                } else {document.getElementById(chatId).style.backgroundColor='rgba(211, 188, 208, 0.7)';}
                             }
                         });
                     })
@@ -92,7 +86,9 @@ function Messages() {
     const selectChat = (id) => {
         setIsSelect(true);
         setChatId(id);
-        setSelChat(chats.find(chat => chat.id === id))
+        setSelChat(chats.find(chat => chat.id === id));
+        chats.map((chat)=>document.getElementById(chat.id).style.backgroundColor='');
+        document.getElementById(id).style.backgroundColor='rgba(211, 188, 208, 0.7)';
     }
 
     const modal = (id) => {
@@ -167,9 +163,9 @@ function Messages() {
                     <div className="top-chats">
                         <p>Выберите чат для общения</p>
                     </div>
-                    <div className="scroll-chats">
+                    <div className="scroll-chats" id='scroll'>
                         {chats.map(chat =>
-                            <div className="chat-detail" key={chat.id} onClick={() => selectChat(chat.id)}>
+                            <div className="chat-detail" id={chat.id} key={chat.id} onClick={() => selectChat(chat.id)}>
                                 <div className="row">
                                     <div className="col-md-3">
                                         {chat.advert
@@ -190,11 +186,17 @@ function Messages() {
                                                         ? (chat.advert.title.length > 22 ? `${chat.advert.title.slice(0, 22)}...` : chat.advert.title)
                                                         : "Объявление недоступно"}</small></p>
                                             <p className="card-text">
+                                                {/*<small className="text-muted">*/}
+                                                {/*    {chat.messages && `${chat.messages[chat.messages.length - 1].pub_date.slice(0, 5)} - */}
+                                                {/*${chat.messages[chat.messages.length - 1].text.length > 19*/}
+                                                {/*        ? `${chat.messages[chat.messages.length - 1].text.slice(0, 19)}...`*/}
+                                                {/*        : chat.messages[chat.messages.length - 1].text}`}*/}
+                                                {/*</small>*/}
                                                 <small className="text-muted">
-                                                    {chat.messages && `${chat.messages[chat.messages.length - 1].pub_date.slice(0, 5)} - 
-                                                ${chat.messages[chat.messages.length - 1].text.length > 19
-                                                        ? `${chat.messages[chat.messages.length - 1].text.slice(0, 19)}...`
-                                                        : chat.messages[chat.messages.length - 1].text}`}
+                                                    {chat.messages && `${chat.last_message_date.slice(0, 5)} - 
+                                                ${chat.last_message_text.length > 19
+                                                        ? `${chat.last_message_text.slice(0, 19)}...`
+                                                        : chat.last_message_text}`}
                                                 </small>
                                             </p>
                                         </div>
@@ -204,8 +206,8 @@ function Messages() {
                                     event.stopPropagation();
                                     modal(chat.id);
                                 }}/>
-                                {chat.new_mess>0 &&
-                                <small className="new-count">{chat.new_mess}</small>
+                                {chat.new_mess > 0 &&
+                                    <small className="new-count">{chat.new_mess}</small>
                                 }
                             </div>)}
                     </div>
@@ -295,16 +297,6 @@ function Messages() {
                             </div>
                         </div>
                     </div>}
-                <div id="liveToast" className="toast align-items-center" role="alert" aria-live="assertive"
-                     aria-atomic="true">
-                    <div className="d-flex">
-                        <div className="toast-body">
-                            Привет, мир! Это тост-сообщение.
-                        </div>
-                        <button type="button" className="btn-close me-2 m-auto" data-bs-dismiss="toast"
-                                aria-label="Закрыть"></button>
-                    </div>
-                </div>
             </div>
             : <h4>На данный момент у Вас нет бесед</h4>
     )

@@ -4,6 +4,7 @@ import Select from 'react-select'
 import React, {useEffect, useRef, useState} from "react";
 import AdvertBoardService from "./AdvertBoardService";
 import {BsPlusCircle, BsXOctagon} from "react-icons/bs";
+import Popup from "reactjs-popup";
 
 const advertBoardService = new AdvertBoardService();
 
@@ -52,7 +53,8 @@ export default function AdvertCreateUpdate() {
     const [isCreate, setIsCreate] = useState(false);
     const [isUpdate, setIsUpdate] = useState(false);
     const [data, setData] = useState({});
-    const [isShowModal, setIsShowModal] = useState(false);
+    // const [isShowModal, setIsShowModal] = useState(false);
+    const pop = useRef();
 
 
     const getOptions = (data) => {
@@ -153,7 +155,6 @@ export default function AdvertCreateUpdate() {
         setIsShowInputPhone(!isShowInputPhone);
     }
 
-
     const selectFiles = () => {
         selFile.current.click();
     }
@@ -207,9 +208,11 @@ export default function AdvertCreateUpdate() {
         renderPhoto(photos);
     }
 
-    const modal = () => {
-        setIsShowModal(!isShowModal);
-    }
+    // const modal = () => {
+    //     setIsShowModal(!isShowModal);
+    // }
+
+    const closeTooltip = () => pop.current.close();
 
     useEffect(() => {
         if (isCreate) {
@@ -232,8 +235,10 @@ export default function AdvertCreateUpdate() {
                                 formData.set('image', photo);
                                 advertBoardService.createPhoto(formData, access);
                             });
-                        }).then(r => setIsShowModal(true))
-                        : setIsShowModal(true)}
+                        }).then(r => pop.current.open())
+                                // setIsShowModal(true))
+                        : pop.current.open();}
+                            // setIsShowModal(true)}
                         reset();
                     }
                 } else {
@@ -258,7 +263,8 @@ export default function AdvertCreateUpdate() {
                             formData.set('image', photo);
                             advertBoardService.createPhoto(formData, access);
                         })}
-                        setIsShowModal(true);
+                        // setIsShowModal(true);
+                        pop.current.open();
                     }
                 } else {
                     navigate('/login', {replace: true, state: {from: location}});
@@ -500,19 +506,23 @@ export default function AdvertCreateUpdate() {
                         {id ? "Сохранить изменения" : "Подать объявление"}</button>
                 </form>
             </div>
-            {isShowModal &&
-                <div className="modal d-block py-5">
-                    <div className="modal-content-moder rounded-3 shadow">
-                        <div className="modal-body text-center">
-                            <h5 className="mb-0">Объявление отправлено на модерацию</h5>
-                        </div>
-                        <div className="modal-footer flex-nowrap p-0">
-                            <button type="button" className="btn" onClick={modal}>
-                                <strong>OK</strong></button>
-                        </div>
-                    </div>
-                </div>}
-
+            {/*{isShowModal &&*/}
+            {/*    <div className="modal d-block py-5">*/}
+            {/*        <div className="modal-content-moder rounded-3 shadow">*/}
+            {/*            <div className="modal-body text-center">*/}
+            {/*                <h5 className="mb-0">Объявление отправлено на модерацию</h5>*/}
+            {/*            </div>*/}
+            {/*            <div className="modal-footer flex-nowrap p-0">*/}
+            {/*                <button type="button" className="btn" onClick={modal}>*/}
+            {/*                    <strong>OK</strong></button>*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*    </div>}*/}
+            <Popup className="my-popup" ref={pop} closeOnDocumentClick onClose={closeTooltip}>
+                <div className="alert">
+                    <span>Объявление отправлено на модерацию</span><br/>
+                </div>
+            </Popup>
         </div>
     )
 }
